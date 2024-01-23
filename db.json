@@ -1,0 +1,164 @@
+{
+  "products": [
+  {
+    "id": 1,
+    "name": "Mèo Siamese",
+    "price": 500,
+    "date": "2023-09-25",
+    "description": "Mèo Siamese là một giống mèo thông minh, dễ thương và thân thiện.",
+    "image": "https://example.com/meo_siamese.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Mèo Persian",
+    "price": 700,
+    "date": "2023-09-25",
+    "description": "Mèo Persian có bộ lông dài và tạo dáng đẹp, thích hợp cho người yêu mèo muốn nuôi một vật nuôi thú vị.",
+    "image": "https://example.com/meo_persian.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Mèo Maine Coon",
+    "price": 800,
+    "date": "2023-09-25",
+    "description": "Mèo Maine Coon là một trong những giống mèo lớn nhất thế giới, với bộ lông bông xù và tính cách thân thiện.",
+    "image": "https://example.com/meo_maine_coon.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Mèo Ragdoll",
+    "price": 600,
+    "date": "2023-09-25",
+    "description": "Mèo Ragdoll có tính cách dễ thương và thân thiện, thích hợp cho gia đình có trẻ nhỏ.",
+    "image": "https://example.com/meo_ragdoll.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Mèo Scottish Fold",
+    "price": 750,
+    "date": "2023-09-25",
+    "description": "Mèo Scottish Fold có đôi tai gập độc đáo và tính cách đáng yêu.",
+    "image": "https://example.com/meo_scottish_fold.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Mèo Bengal",
+    "price": 900,
+    "date": "2023-09-25",
+    "description": "Mèo Bengal có bộ lông đốm và tính cách năng động, thích hợp cho người yêu mèo hoang dã.",
+    "image": "https://example.com/meo_bengal.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Mèo Sphynx",
+    "price": 1000,
+    "date": "2023-09-25",
+    "description": "Mèo Sphynx không có lông và thường được biết đến với tính cách tinh nghịch.",
+    "image": "https://example.com/meo_sphynx.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Mèo Abyssinian",
+    "price": 650,
+    "date": "2023-09-25",
+    "description": "Mèo Abyssinian là một giống mèo nhanh nhẹn và thích khám phá.",
+    "image": "https://example.com/meo_abyssinian.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Mèo Burmese",
+    "price": 550,
+    "date": "2023-09-25",
+    "description": "Mèo Burmese có tính cách tình cảm và thân thiện.",
+    "image": "https://example.com/meo_burmese.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Mèo British Shorthair",
+    "price": 850,
+    "date": "2023-09-25",
+    "description": "Mèo British Shorthair có bộ lông dày và tính cách điềm đạm.",
+    "image": "https://example.com/meo_british_shorthair.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Mèo Russian Blue",
+    "price": 700,
+    "date": "2023-09-25",
+    "description": "Mèo Russian Blue có bộ lông màu xanh đặc biệt và tính cách nhạy cảm.",
+    "image": "https://example.com/meo_russian_blue.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Mèo Oriental Shorthair",
+    "price": 750,
+    "date": "2023-09-25",
+    "description": "Mèo Oriental Shorthair có thân hình mảnh mai và tính cách năng động.",
+    "image": "https://example.com/meo_oriental_shorthair.jpg"
+  },
+  {
+    "id": 13,
+    "name": "Mèo Cornish Rex",
+    "price": 700,
+    "date": "2023-09-25",
+    "description": "Mèo Cornish Rex có bộ lông mềm mại và tính cách thân thiện.",
+    "image": "https://example.com/meo_cornish_rex.jpg"
+  },
+  {
+    "id": 14,
+    "name": "Mèo Manx",
+    "price": 600,
+    "date": "2023-09-25",
+    "description": "Mèo Manx thường không có đuôi và có tính cách tinh nghịch.",
+    "image": "https://example.com/meo_manx.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Mèo American Bobtail",
+    "price": 800,
+    "date": "2023-09-25",
+    "description": "Mèo American Bobtail có đuôi ngắn và tính cách hòa đồng.",
+    "image": "https://example.com/meo_american_bobtail.jpg"
+  },
+  {
+    "id": 16,
+    "name": "Mèo Chartreux",
+    "price": 750,
+    "date": "2023-09-25",
+    "description": "Mèo Chartreux có bộ lông màu xám và tính cách đoàn kết.",
+    "image": "https://example.com/meo_chartreux.jpg"
+  },
+  {
+    "id": 17,
+    "name": "Mèo Egyptian Mau",
+    "price": 900,
+    "date": "2023-09-25",
+    "description": "Mèo Egyptian Mau có bộ lông đốm và tính cách đáng yêu.",
+    "image": "https://example.com/meo_egyptian_mau.jpg"
+  },
+  {
+    "id": 18,
+    "name": "Mèo Turkish Van",
+    "price": 700,
+    "date": "2023-09-25",
+    "description": "Mèo Turkish Van có bộ lông màu trắng và tính cách thân thiện.",
+    "image": "https://example.com/meo_turkish_van.jpg"
+  },
+  {
+    "id": 19,
+    "name": "Mèo Singapura",
+    "price": 650,
+    "date": "2023-09-25",
+    "description": "Mèo Singapura có kích thước nhỏ và tính cách năng động.",
+    "image": "https://example.com/meo_singapura.jpg"
+  },
+  {
+    "id": 20,
+    "name": "Mèo Burmilla",
+    "price": 750,
+    "date": "2023-09-25",
+    "description": "Mèo Burmilla có bộ lông bóng bẩy và tính cách thân thiện.",
+    "image": "https://example.com/meo_burmilla.jpg"
+  }
+]
+}
