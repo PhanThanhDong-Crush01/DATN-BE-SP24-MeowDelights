@@ -1,13 +1,18 @@
-// import express, { Router } from "express";
-
-// const router: Router = express.Router();
-
-// // router.route("/categories", get);
-
-// export default router;
-
 import express from "express";
-import { create } from "../controllers/category";
-const router = express.Router();
 
-export default router;
+// import { checkPermission } from "../middlewares/checkPermission.js";
+import {
+  create,
+  getAll,
+  getDetail,
+  remove,
+  update,
+} from "../controllers/category.js";
+
+const routerCategories = express.Router();
+routerCategories.get("/", getAll);
+routerCategories.get("/:id", getDetail);
+routerCategories.post("/",  create);
+routerCategories.put("/:id",  update);
+routerCategories.delete("/:id",  remove);
+export default routerCategories;
