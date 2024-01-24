@@ -2,32 +2,24 @@ import mongoose from "mongoose";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: Boolean,
-      required: true,
-    },
-    quantity: {
+    CodeVC: {
       type: Number,
       required: true,
     },
-    decrease: {
+    Status: {
+      type: String,
+      required: true,
+    },
+    Decrease: {
       type: Number,
       required: true,
     },
-    expiry: {
+    Expiry: {
       type: String,
       required: true,
     },
-    conditions: {
-      type: String,
-      required: true,
-    },
-    idTypeVoucher: {
-      type: String,
+    Conditions: {
+      type: Number,
       required: true,
     },
   },
