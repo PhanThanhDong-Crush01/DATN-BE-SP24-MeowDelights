@@ -1,7 +1,23 @@
-import mongoose, { Schema } from "mongoose";
-import { IUser } from "../interfaces/user";
-const userSchema: Schema<IUser> = new mongoose.Schema({
-  timestamps: true,
-  versionKey: false,
-});
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+        },
+        email: {
+            type: String,
+            required: true,
+        },
+        password: {
+            type: String,
+        },
+        role: {
+            type: String,
+            default: "member",
+        },
+    },
+    { timestamps: true, versionKey: false }
+);
+
 export default mongoose.model("User", userSchema);

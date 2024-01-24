@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import router from "./routers/index.ts";
-import CategoryModel from "./models/category.ts";
+import router from "./routers/index";
+import CategoryModel from "./models/category";
 dotenv.config();
 const { PORT, DB_URL } = process.env;
 
