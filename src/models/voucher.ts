@@ -3,23 +3,23 @@ import { Voucher } from "../interface/IVoucher";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
-    CodeVC: {
+    codevc: {
       type: Number,
       required: true,
     },
-    Status: {
+    status: {
       type: String,
       required: true,
     },
-    Decrease: {
+    decrease: {
       type: Number,
       required: true,
     },
-    Expiry: {
+    expiry: {
       type: String,
       required: true,
     },
-    Conditions: {
+    conditions: {
       type: Number,
       required: true,
     },
