@@ -1,8 +1,24 @@
 import joi from "joi";
 
-export const productSchema = joi.object({});
+export const productSchema = joi.object({
+  name: joi.string().required(),
+  image: joi.string().required(),
+  import_date: joi.date().required(),
+  expiry: joi.any().required(),
+  status: joi.boolean(),
+  description: joi.string(),
+  idCategory: joi.string().required(),
+});
 
-export const typeProductSchema = joi.object({});
+export const typeProductSchema = joi.object({
+  size: joi.string().required(),
+  color: joi.string().required(),
+  quantily: joi.number().required(),
+  image: joi.string().required(),
+  weight: joi.number().required(),
+  price: joi.number().required(),
+  idPro: joi.object().required(),
+});
 
 // // export const categoryProductSchema = joi.object().shape({
 // //     name: joi.string().trim().required(),

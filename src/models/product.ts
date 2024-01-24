@@ -1,20 +1,18 @@
-// models/product.ts
-import mongoose, { Document, Model, PaginateModel } from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
-import { IProduct } from "../interface/IProduct";
+import mongoose from "mongoose";
+// import { IProduct } from "../interfaces/product";
 
-interface IProductModel extends PaginateModel<IProduct & Document> {}
-
-const productSchema = new mongoose.Schema<IProduct>(
-  {},
+const productSchema = new mongoose.Schema<any>(
+  {
+    name: { type: String, required: true },
+    image: { type: String, required: true },
+    import_date: { type: Date, required: true },
+    expiry: { type: String, required: true },
+    status: { type: Boolean },
+    description: { type: String, required: true },
+    idCategory: { type: String, required: true },
+  },
   { timestamps: true, versionKey: false }
 );
 
-productSchema.plugin(mongoosePaginate);
-
-const ProductModel: IProductModel = mongoose.model<IProduct, IProductModel>(
-  "Product",
-  productSchema
-);
-
+const ProductModel = mongoose.model<any>("Product", productSchema);
 export default ProductModel;
