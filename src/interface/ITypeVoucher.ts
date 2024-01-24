@@ -1,1 +1,4 @@
-export interface ITypeVoucher {}
+export interface ITypeVoucher {
+  _id: string;
+  name: string;
+}
