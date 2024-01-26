@@ -1,8 +1,8 @@
-export interface Voucher {
-  _idvoucher: number;
-  codevc: number;
+export interface IVoucher {
+  _idvoucher: string;
+  codevc: string;
   status: string;
   decrease: number;
   expiry: string; //hạn sử dụng
-  conditions: number;
+  conditions: string; /// điều kiện
 }
