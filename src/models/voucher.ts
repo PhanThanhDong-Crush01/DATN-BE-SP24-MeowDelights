@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
-import { Voucher } from "../interface/IVoucher";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
     codevc: {
-      type: Number,
+      type: String,
       required: true,
     },
     status: {
@@ -20,7 +19,7 @@ const voucherSchema = new mongoose.Schema<any>(
       required: true,
     },
     conditions: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
