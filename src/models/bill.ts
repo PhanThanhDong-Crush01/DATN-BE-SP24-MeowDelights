@@ -11,7 +11,7 @@ const BillSchema = new mongoose.Schema<any>(
       require: true,
     },
     date: {
-      type: String,
+      type: Date,
       required: true,
     },
     adress: {
@@ -19,7 +19,7 @@ const BillSchema = new mongoose.Schema<any>(
       required: true,
     },
     tel: {
-      type: String,
+      type: Number,
       required: true,
     },
     idvc: {

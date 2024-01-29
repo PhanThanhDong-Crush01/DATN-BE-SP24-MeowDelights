@@ -1,6 +1,6 @@
-import Bill from "../models/Bill";
-import BillModel from "../models/Bill";
+import BillModel from "../models/bill";
 import BillDetailModel from "../models/billdetail";
+import CategoryModel from "../models/category";
 import { BillSchema } from "../validation/bill";
 import { addBillDetail } from "./billDetail";
 
@@ -20,7 +20,7 @@ export const createBill = async (req: any, res: any) => {
       });
     }
     const idbill = bill._id;
-    const billdetails = req.body.billdetail;
+    const billdetails = req.body.billdetails;
     for (const TypeBillDetail of billdetails) {
       const newBillDetail = { ...TypeBillDetail, idbill };
       try {
@@ -48,7 +48,7 @@ export const createBill = async (req: any, res: any) => {
 export const getAllBill = async (req, res) => {
   try {
     // const { data } = await axios.get(`${API_URL}/typeVoucher`);
-    const data = await Bill.find();
+    const data = await BillModel.find();
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -70,7 +70,7 @@ export const getOneBill = async (req, res) => {
   try {
     const idBill = req.params.id;
 
-    const data = await Bill.findById(idBill);
+    const data = await BillModel.findById(idBill);
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -100,7 +100,9 @@ export const Change_PaymentStatus = async (req, res) => {
     //   paymentstatus: "Đã thanh toán",
     //}
 
-    const data = await Bill.findByIdAndUpdate(idBill, req.body, { new: true });
+    const data = await BillModel.findByIdAndUpdate(idBill, req.body, {
+      new: true,
+    });
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không thể thay đổi trạng thái thanh toán hóa đơn",
@@ -125,7 +127,7 @@ export const Change_OrderStatus = async (req, res) => {
     const newOrderStatus = req.body.orderstatus;
 
     // Lấy đơn hàng hiện tại
-    const currentBill = await Bill.findById(idBill);
+    const currentBill = await BillModel.findById(idBill);
 
     // Kiểm tra xem trạng thái mới có phải là trạng thái hợp lệ không
     const validOrderStatuses = [
@@ -152,7 +154,7 @@ export const Change_OrderStatus = async (req, res) => {
     }
 
     // Cập nhật trạng thái đơn hàng
-    const data = await Bill.findByIdAndUpdate(
+    const data = await BillModel.findByIdAndUpdate(
       idBill,
       { orderstatus: newOrderStatus },
       { new: true }
@@ -166,6 +168,162 @@ export const Change_OrderStatus = async (req, res) => {
     return res.status(200).json({
       message: "Thay đổi trạng thái của đơn hàng thành công!",
       bill: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// export const revenue = async (req: any, res: any) => {
+//   try {
+//     const currentDate = new Date(); // Ngày hiện tại
+//     const startDate = new Date(2024, 0, 1); // Ngày bắt đầu là 1/1/2024
+//     const endDate = new Date(
+//       currentDate.getFullYear(),
+//       currentDate.getMonth(),
+//       currentDate.getDate() + 1
+//     ); // Ngày kết thúc là ngày hiện tại
+
+//     // Lưu kết quả của các ngày vào mảng
+//     const revenueByDate: { date: string; totalRevenue: number }[] = [];
+
+//     // Lặp qua mỗi ngày từ ngày bắt đầu đến ngày kết thúc
+//     for (
+//       let d = new Date(startDate);
+//       d <= endDate;
+//       d.setDate(d.getDate() + 1)
+//     ) {
+//       const currentDate = new Date(d);
+
+//       // Tính tổng doanh thu trong khoảng thời gian
+//       const result = await BillModel.aggregate([
+//         {
+//           $match: {
+//             date: {
+//               $gte: currentDate,
+//               $lt: new Date(
+//                 currentDate.getFullYear(),
+//                 currentDate.getMonth(),
+//                 currentDate.getDate() + 1
+//               ),
+//             },
+//           },
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             totalRevenue: { $sum: "$money" },
+//           },
+//         },
+//       ]);
+
+//       const totalRevenue = result.length > 0 ? result[0].totalRevenue : 0;
+
+//       revenueByDate.push({
+//         date: currentDate.toISOString().split("T")[0], // Định dạng ngày thành YYYY-MM-DD
+//         totalRevenue: totalRevenue,
+//       });
+//     }
+
+//     return res.status(200).json({
+//       revenueByDate: revenueByDate,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
+
+export const dailyRevenueAndCategorySales = async (req, res) => {
+  try {
+    // Tính toán ngày bắt đầu là ngày 1/1/2024
+    const startDate = new Date(2024, 0, 1);
+    console.log("🚀 ~ dailyRevenueAndCategorySales ~ startDate:", startDate);
+
+    // Tính toán ngày kết thúc là ngày hiện tại
+    const endDate = new Date();
+    console.log("🚀 ~ dailyRevenueAndCategorySales ~ endDate:", endDate);
+
+    // Tính tổng doanh thu trong ngày
+    const dailyResult = await BillModel.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lt: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$money" },
+        },
+      },
+    ]);
+    console.log(
+      "🚀 ~ dailyRevenueAndCategorySales ~ dailyResult:",
+      dailyResult
+    );
+
+    const dailyRevenue =
+      dailyResult.length > 0 ? dailyResult[0].totalRevenue : 0;
+
+    // Lấy danh sách các sản phẩm trong danh mục "Phụ kiện mèo" và "Đồ ăn mèo"
+    const accessoriesCategory = await CategoryModel.findOne({
+      name: "Phụ kiện mèo",
+    });
+    const foodCategory = await CategoryModel.findOne({ name: "Đồ ăn mèo" });
+
+    const accessoriesProducts = accessoriesCategory
+      ? accessoriesCategory.products
+      : [];
+    const foodProducts = foodCategory ? foodCategory.products : [];
+
+    // Tính tổng doanh thu của các sản phẩm trong danh mục "Phụ kiện mèo" và "Đồ ăn mèo"
+    const accessorySalesResult = await BillModel.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lt: endDate },
+          idvc: { $in: accessoriesProducts },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$money" },
+        },
+      },
+    ]);
+
+    const accessorySales =
+      accessorySalesResult.length > 0
+        ? accessorySalesResult[0].totalRevenue
+        : 0;
+
+    const foodSalesResult = await BillModel.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lt: endDate },
+          idvc: { $in: foodProducts },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$money" },
+        },
+      },
+    ]);
+
+    const foodSales =
+      foodSalesResult.length > 0 ? foodSalesResult[0].totalRevenue : 0;
+
+    return res.status(200).json({
+      date: startDate.toISOString().split("T")[0], // Trả về ngày bắt đầu thống kê
+      dailyRevenue: dailyRevenue,
+      accessorySales: accessorySales,
+      foodSales: foodSales,
     });
   } catch (error) {
     return res.status(500).json({

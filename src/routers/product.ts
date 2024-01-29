@@ -6,7 +6,7 @@ import { create, get, getAll, restore, storage } from "../controllers/product";
 const router: Router = express.Router();
 router.get("/", getAll);
 router.get("/:id", get);
-router.post("/add", create);
+router.post("/", create);
 router.patch("/restore/:id", restore);
 // router.put("/:id/update", authenticate, authorization, update)
 router.patch("/storage/:id/", storage);

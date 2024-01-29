@@ -2,9 +2,9 @@ import Joi from "joi";
 export const BillSchema = Joi.object({
   iduser: Joi.string().required(),
   money: Joi.number().required().min(0),
-  date: Joi.string().required(),
+  date: Joi.date().required(),
   adress: Joi.string().required(),
-  tel: Joi.string().required(),
+  tel: Joi.number().required(),
   idvc: Joi.string().required(),
   paymentmethods: Joi.string().required(),
   paymentstatus: Joi.string().required(),
