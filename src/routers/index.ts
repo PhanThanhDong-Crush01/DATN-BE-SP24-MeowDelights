@@ -16,7 +16,7 @@ const router = Router();
 
 router.use("/products", productRouter);
 router.use("/categories", categoryRouter);
-router.use("/carts", cartRouter);
+router.use("/cart", cartRouter);
 router.use("/auth", authRouter);
 router.use("/voucher", voucherRouter);
 router.use("/type_voucher", typeVoucherRouter);
