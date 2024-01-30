@@ -128,9 +128,29 @@ export const getAll = async (req: any, res: any) => {
       });
     }
 
+    const newData = await Promise.all(
+      data.docs.map(async (itemPro: any) => {
+        const typeProducts = await TypeProductModel.find({
+          idPro: itemPro._id,
+        });
+
+        // Kiểm tra nếu typeProducts rỗng
+        if (typeProducts.length === 0) {
+          return { ...itemPro._doc, price: null }; // hoặc giá trị mặc định khác nếu cần thiết
+        }
+
+        const minPrice = typeProducts.reduce((min, current) => {
+          return current.price < min ? current.price : min;
+        }, typeProducts[0].price);
+        return { ...itemPro._doc, price: minPrice };
+      })
+    );
+
+    console.log("🚀 ~ getAll ~ newData:", newData);
+
     return res.status(200).json({
       message: "Gọi danh sách sản phẩm thành công!",
-      datas: data,
+      datas: newData,
     });
   } catch (error) {
     return res.status(500).json({

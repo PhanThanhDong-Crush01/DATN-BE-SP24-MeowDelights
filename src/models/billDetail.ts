@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const BillDetailSchema = new mongoose.Schema<any>(
+const OrderDetailSchema = new mongoose.Schema<any>(
   {
     idbill: {
       type: Object,
@@ -8,13 +8,12 @@ const BillDetailSchema = new mongoose.Schema<any>(
     iduser: {
       type: String,
     },
-
     idpro: {
-      type: Object,
+      type: String,
       required: true,
     },
     idprotype: {
-      type: Object,
+      type: String,
       required: true,
     },
     quantity: {
@@ -31,5 +30,5 @@ const BillDetailSchema = new mongoose.Schema<any>(
     versionKey: false,
   }
 );
-const BillDetailModel = mongoose.model<any>("BillDetail", BillDetailSchema);
-export default BillDetailModel;
+const OrderDetailModel = mongoose.model<any>("OrderDetail", OrderDetailSchema);
+export default OrderDetailModel;
