@@ -9,6 +9,6 @@ router.get("/:id", get);
 router.post("/", create);
 router.patch("/restore/:id", restore);
 // router.put("/:id/update", authenticate, authorization, update)
-router.patch("/storage/:id/", storage);
+router.patch("/storage/:id/");
 
 export default router;
