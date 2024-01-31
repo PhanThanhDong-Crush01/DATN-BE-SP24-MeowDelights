@@ -11,11 +11,11 @@ export const BillSchema = Joi.object({
   orderstatus: Joi.string().required(),
 });
 const BillDetailSchema = Joi.object({
-  idbill: Joi.object().required(),
-  iduser: null,
+  idbill: Joi.object(),
+  iduser: Joi.string(),
   idpro: Joi.string().required(),
   idprotype: Joi.string().required(),
   quantity: Joi.number().required().min(0),
-  money: Joi.number().required().min(0),
+  money: Joi.number().min(0),
 });
 export default BillDetailSchema;

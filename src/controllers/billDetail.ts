@@ -1,5 +1,5 @@
 import BillDetailSchema from "../validation/bill";
-import BillDetailModel from "../models/billdetail";
+import OrderDetailModel from "../models/billdetail";
 export const addBillDetail = async (
   req: any,
   res: any,
@@ -13,7 +13,7 @@ export const addBillDetail = async (
       });
     }
 
-    const billdetail = await BillDetailModel.create(BillDetailData);
+    const billdetail = await OrderDetailModel.create(BillDetailData);
     if (!billdetail) {
       return res.status(500).json({
         message: "Thêm hóa đơn chi tiết thất bại",

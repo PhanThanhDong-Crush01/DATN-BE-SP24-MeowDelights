@@ -1,5 +1,5 @@
 import BillModel from "../models/bill";
-import BillDetailModel from "../models/billdetail";
+import OrderDetailModel from "../models/billdetail";
 import CategoryModel from "../models/category";
 import { BillSchema } from "../validation/bill";
 import { addBillDetail } from "./billDetail";
@@ -30,7 +30,7 @@ export const createBill = async (req: any, res: any) => {
         console.error(`Error in addBillDetail: ${error.message}`);
       }
     }
-    const BillDetailData = await BillDetailModel.find({ idbill: idbill });
+    const BillDetailData = await OrderDetailModel.find({ idbill: idbill });
 
     return res.json({
       message: "Thêm hóa đơn và hóa đơn chi tiết thành công",
@@ -77,7 +77,7 @@ export const getOneBill = async (req, res) => {
       });
     }
     //data._id là _id của BILL
-    const billDetailData = await BillDetailModel.find({
+    const billDetailData = await OrderDetailModel.find({
       idbill: data._id,
     });
 
