@@ -12,7 +12,7 @@ import {
 const routerCategories = express.Router();
 routerCategories.get("/", getAll);
 routerCategories.get("/:id", getDetail);
-routerCategories.post("/",  create);
-routerCategories.put("/:id",  update);
-routerCategories.delete("/:id",  remove);
+routerCategories.post("/", create);
+routerCategories.patch("/:id", update);
+routerCategories.delete("/:id", remove);
 export default routerCategories;

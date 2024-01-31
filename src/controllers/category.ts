@@ -1,10 +1,10 @@
 import Category from "../models/category.js";
 import { categoryValid } from "../validation/category.js";
-import { ICategory } from '../interface/ICategory.js';
+import { ICategory } from "../interface/ICategory.js";
 
 export const getAll = async (req, res) => {
   try {
-    const data = await Category.find({}).populate("products");
+    const data = await Category.find({});
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không có danh mục để hiển thị",
@@ -24,7 +24,7 @@ export const getAll = async (req, res) => {
 
 export const getDetail = async (req, res) => {
   try {
-    const data = await Category.findById(req.params.id).populate("products");
+    const data = await Category.findById(req.params.id);
     if (!data) {
       return res.status(404).json({
         message: "Danh mục không tồn tại",
@@ -71,16 +71,13 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
-    const { error } = categoryValid.validate(req.body, { abortEarly: false });
-    if (error) {
-      const errors = error.details.map((err) => err.message);
-      return res.status(400).json({
-        message: errors,
-      });
-    }
-    const data = await Category.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const data = await Category.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name },
+      {
+        new: true,
+      }
+    );
     if (!data) {
       return res.status(404).json({
         message: "Cập nhật danh mục thất bại",
