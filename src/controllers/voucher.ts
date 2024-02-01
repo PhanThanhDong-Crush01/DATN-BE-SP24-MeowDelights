@@ -1,3 +1,4 @@
+import TypeVoucherModel from "../models/typeVoucher";
 import Voucher from "../models/voucher";
 export const createVoucher = async (req, res) => {
   try {
@@ -13,7 +14,7 @@ export const createVoucher = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: error.message,
+      message: "lỗi khi thêm voucher: " + error.message,
     });
   }
 };
@@ -43,9 +44,11 @@ export const getDetailVoucher = async (req, res) => {
         message: "Lấy khuyến mại chi tiết thất bại",
       });
     }
+    const typeVoucher = await TypeVoucherModel.findById(data.idTypeVoucher);
+
     return res.status(200).json({
       message: "Lấy khuyến mại chi tiết thành công",
-      datas: data,
+      datas: { ...data._doc, typeVoucher: typeVoucher._doc.name },
     });
   } catch (error) {
     return res.status(500).json({

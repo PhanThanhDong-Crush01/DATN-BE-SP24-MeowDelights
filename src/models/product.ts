@@ -1,7 +1,6 @@
-// models/product.ts
-import mongoose, { Document, Model, PaginateModel } from "mongoose";
+import { IProduct } from "./../interface/IProduct";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { IProduct } from "../interface/IProduct";
+import mongoose, { Document, Model, PaginateModel } from "mongoose";
 
 interface IProductModel extends PaginateModel<IProduct & Document> {}
 
@@ -24,5 +23,4 @@ const ProductModel: IProductModel = mongoose.model<IProduct, IProductModel>(
   "Product",
   productSchema
 );
-
 export default ProductModel;

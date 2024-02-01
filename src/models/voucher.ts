@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
-    codevc: {
+    name: {
       type: String,
       required: true,
     },
     status: {
-      type: String,
+      type: Boolean,
+      required: true,
+    },
+    quantity: {
+      type: Number,
       required: true,
     },
     decrease: {
@@ -19,6 +23,10 @@ const voucherSchema = new mongoose.Schema<any>(
       required: true,
     },
     conditions: {
+      type: Number,
+      required: true,
+    },
+    idTypeVoucher: {
       type: String,
       required: true,
     },
@@ -26,4 +34,5 @@ const voucherSchema = new mongoose.Schema<any>(
   { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model<any>("Voucher", voucherSchema);
+const VoucherModel = mongoose.model<any>("Voucher", voucherSchema);
+export default VoucherModel;

@@ -1,3 +1,4 @@
+import CategoryModel from "../models/category";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import { productSchema } from "./../validation/product";
@@ -47,9 +48,6 @@ export const create = async (req: any, res: any) => {
 
 export const get = async function (req, res) {
   try {
-    // const product = await ProductModel.findById(req.params.id).populate(
-    //   "categoryId"
-    // );
     const product = await ProductModel.findById(req.params.id);
     if (!product) {
       return res.json({
@@ -61,10 +59,21 @@ export const get = async function (req, res) {
       idPro: product._id,
     });
 
+    // Tính toán giá và số lượng từ loại sản phẩm
+    const minPrice = Math.min(...types_a_pro.map((type) => type.price));
+    const maxPrice = Math.max(...types_a_pro.map((type) => type.price));
+    const totalQuantity = types_a_pro.reduce(
+      (total, type) => total + type.quantily,
+      0
+    );
+
     return res.json({
       message: "Tìm sản phẩm thành công",
       data: product,
       typeProduct: types_a_pro,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      totalQuantity: totalQuantity,
     });
   } catch (error) {
     return res.status(400).json({
@@ -122,7 +131,7 @@ export const getAll = async (req: any, res: any) => {
     // const { data } = await axios.get(`${API_URL}/Product`);
     const data = await ProductModel.paginate({}, options);
 
-    if (!data || data.length === 0) {
+    if (!data || data.docs.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy sản phẩm",
       });
@@ -142,11 +151,26 @@ export const getAll = async (req: any, res: any) => {
         const minPrice = typeProducts.reduce((min, current) => {
           return current.price < min ? current.price : min;
         }, typeProducts[0].price);
-        return { ...itemPro._doc, price: minPrice };
+
+        const totalQuantity = typeProducts.reduce((total, current) => {
+          return total + current.quantily;
+        }, 0);
+
+        const maxPrice = Math.max(
+          ...typeProducts.map((product) => product.price)
+        );
+
+        const category = await CategoryModel.findById(itemPro.idCategory);
+
+        return {
+          ...itemPro._doc,
+          minPrice: minPrice,
+          totalQuantity,
+          maxPrice,
+          categoryName: category ? category.name : null,
+        };
       })
     );
-
-    console.log("🚀 ~ getAll ~ newData:", newData);
 
     return res.status(200).json({
       message: "Gọi danh sách sản phẩm thành công!",
@@ -212,3 +236,25 @@ export const restore = async (req, res: any) => {
     });
   }
 }; //phụ hồi pro
+export const deletePro = async (req, res: any) => {
+  try {
+    const id = req.params.id;
+    const data = await ProductModel.findByIdAndDelete(id);
+
+    console.log(data);
+    if (!data) {
+      return res.status(404).json({
+        message: "Xóa sản phẩm thất bại!",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Xóa sản phẩm thành công!",
+      datas: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};

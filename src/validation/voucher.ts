@@ -1,11 +1,13 @@
 import Joi from "joi";
 
 const voucherSchema = Joi.object({
-  codevc: Joi.string().required(),
-  status: Joi.string().required(),
+  name: Joi.string().required(),
+  status: Joi.boolean().required(),
+  quantity: Joi.number().required(),
   decrease: Joi.number().required().min(0),
   expiry: Joi.string().required(),
   conditions: Joi.string().required(),
+  idTypeVoucher: Joi.string().required(),
 });
 
 export default voucherSchema;
