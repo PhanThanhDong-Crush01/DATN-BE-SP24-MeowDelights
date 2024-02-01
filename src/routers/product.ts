@@ -16,7 +16,7 @@ router.get("/:id", get);
 router.post("/", create);
 router.patch("/restore/:id", restore);
 // router.put("/:id/update", authenticate, authorization, update)
-router.patch("/storage/:id/");
+router.patch("/storage/:id/", storage);
 router.delete("/delete/:id/", deletePro);
 
 export default router;
