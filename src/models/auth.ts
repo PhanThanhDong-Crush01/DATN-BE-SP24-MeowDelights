@@ -36,4 +36,5 @@ const authSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model("Auth", authSchema);
+const AuthModel = mongoose.model("Auth", authSchema);
+export default AuthModel;

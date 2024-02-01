@@ -12,6 +12,8 @@ import billRouter from "./bill";
 import billDetailRouter from "./billDetail";
 
 import uploadRouter from "./upload";
+import deleteAllDataRouter from "./deleteAllData";
+
 const router = Router();
 
 router.use("/products", productRouter);
@@ -23,5 +25,6 @@ router.use("/type_voucher", typeVoucherRouter);
 router.use("/bill", billRouter);
 router.use("/bill_detail", billDetailRouter);
 router.use("/upload", uploadRouter);
+router.use("/deleteAllData", deleteAllDataRouter);
 
 export default router;

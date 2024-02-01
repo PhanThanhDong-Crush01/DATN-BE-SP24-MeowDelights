@@ -15,7 +15,7 @@ export const typeProductSchema = joi.object({
   color: joi.string().required(),
   quantily: joi.number().required(),
   image: joi.string().required(),
-  weight: joi.number().required(),
+  weight: joi.string().required(),
   price: joi.number().required(),
   idPro: joi.object().required(),
 });

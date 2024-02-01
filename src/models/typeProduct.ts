@@ -7,7 +7,7 @@ const typeProductSchema = new mongoose.Schema<any>(
     size: { type: String, required: true },
     quantily: { type: Number, required: true }, // định lượng
     image: { type: String, required: true },
-    weight: { type: Number, required: true },
+    weight: { type: String, required: true },
     price: { type: Number, required: true },
     idPro: { type: Object, required: true },
   },

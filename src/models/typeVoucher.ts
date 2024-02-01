@@ -4,4 +4,5 @@ const TypeVoucherSchema = new mongoose.Schema<any>(
   { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model<any>("TypeVoucher", TypeVoucherSchema);
+const TypeVoucherModel = mongoose.model<any>("TypeVoucher", TypeVoucherSchema);
+export default TypeVoucherModel;

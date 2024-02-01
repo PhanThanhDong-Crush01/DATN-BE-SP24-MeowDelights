@@ -82,7 +82,7 @@ export const create = async (req: any, res: any) => {
 
 export const update = async (req: any, res: any) => {
   try {
-    const id = req.params.id;
+    const id = req.body._id;
     const quantity = req.body.quantity;
 
     const userCartItem = await OrderDetailModel.findById(id);
@@ -118,14 +118,14 @@ export const getAllCartOfUser = async (req: any, res: any) => {
         message: "In ra giỏ hàng của bạn thất bại",
       });
     }
-
-    // Sử dụng Promise.all để chờ đợi hoàn thành của tất cả các hàm bất đồng bộ
+    var total = 0;
     const updatedCart = await Promise.all(
       userCart.map(async (cartItem) => {
         const productItem = await ProductModel.findById(cartItem.idpro);
         const productTypeItem = await TypeProductModel.findById(
           cartItem.idprotype
         );
+        total += cartItem.money;
         return {
           ...cartItem.toObject(), // Chuyển đổi cartItem thành một plain JavaScript object
           product: productItem,
@@ -137,6 +137,7 @@ export const getAllCartOfUser = async (req: any, res: any) => {
     return res.status(200).json({
       message: "In ra giỏ hàng của bạn thành công",
       data: updatedCart,
+      totalAmount: total,
     });
   } catch (error) {
     console.error(`Error in create cart item: ${error.message}`);
