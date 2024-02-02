@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getAll, restore, storage } from "../controllers/product";
+import { create, get, getAll, restore, storage } from "../controllers/product";
 // import { authorization, } from "../middlewares/authorization";
 // import { authenticate } from "../middlewares/authenticate";
 
@@ -9,6 +9,6 @@ router.get("/", getAll);
 // router.post("/products/:id", create);
 router.patch("/restore/:id", restore);
 // router.put("/:id/update", authenticate, authorization, update)
-router.patch("/storage/:id/", storage);
+router.patch("/storage/:id/");
 
 export default router;
