@@ -11,13 +11,6 @@ export const create = async (req: any, res: any) => {
     const idprotype = cartItem.idprotype; // Correctly access idprotype from cartItem
     const quantity = cartItem.quantity; // Correctly access quantity from cartItem
 
-    const { error } = BillDetailSchema.validate(cartItem);
-    if (error) {
-      return res.status(400).json({
-        message: `Validation error: ${error.details[0].message}`,
-      });
-    }
-
     const priceTypePro: any = await TypeProductModel.findById(idprotype);
     if (!priceTypePro) {
       return res.status(404).json({

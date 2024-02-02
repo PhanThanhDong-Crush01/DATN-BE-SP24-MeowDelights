@@ -1,18 +1,12 @@
+import AuthModel from "../models/auth";
 import BillModel from "../models/bill";
 import OrderDetailModel from "../models/billdetail";
 import CategoryModel from "../models/category";
-import { BillSchema } from "../validation/bill";
+import VoucherModel from "../models/voucher";
 import { addBillDetail } from "./billDetail";
 
 export const createBill = async (req: any, res: any) => {
   try {
-    const { error } = BillSchema.validate(req.body.bill);
-    if (error) {
-      return res.status(400).json({
-        messageErrorBill: error.details[0].message,
-      });
-    }
-
     const bill = await BillModel.create(req.body.bill);
     if (!bill) {
       return res.json({
@@ -24,7 +18,6 @@ export const createBill = async (req: any, res: any) => {
     for (const TypeBillDetail of billdetails) {
       const newBillDetail = { ...TypeBillDetail, idbill };
       try {
-        console.log(newBillDetail);
         await addBillDetail(req, res, newBillDetail);
       } catch (error) {
         console.error(`Error in addBillDetail: ${error.message}`);
@@ -85,6 +78,77 @@ export const getOneBill = async (req, res) => {
       message: "Tìm kiếm hóa đơn thành công!",
       bill: data,
       billDetails: billDetailData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const getBillOfUser = async (req, res) => {
+  try {
+    const iduser = req.params.id;
+
+    const data = await BillModel.find({ iduser: iduser });
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        message: "Không tìm thấy hóa đơn",
+      });
+    }
+    //data._id là _id của BILL
+    const newData = await Promise.all(
+      data.map(async (item: any) => {
+        const billDetails = await OrderDetailModel.find({
+          idbill: item._id,
+        });
+
+        // Tính tổng tiền của hóa đơn
+        const totalMoney = billDetails.reduce((total: number, current: any) => {
+          return total + current.money;
+        }, 0);
+
+        // Tính tổng số lượng sản phẩm trong hóa đơn
+        const totalQuantity = billDetails.reduce(
+          (total: number, current: any) => {
+            return total + current.quantity;
+          },
+          0
+        );
+
+        const user: any = await AuthModel.findById(item.iduser);
+        if (item.idvc != "") {
+          const voucher: any = await VoucherModel.findById(item.idvc);
+          console.log("🚀 ~ data.map ~ voucher:", voucher);
+        }
+
+        // Trả về thông tin cơ bản của hóa đơn cùng với tổng số lượng và tổng tiền
+        return {
+          _id: item._id,
+          iduser: item.iduser,
+          money: totalMoney,
+          totalQuantity: totalQuantity,
+          date: item.date,
+          adress: item.adress,
+          tel: item.tel,
+          idvc: item.idvc,
+          paymentmethods: item.paymentmethods,
+          paymentstatus: item.paymentstatus,
+          orderstatus: item.orderstatus,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          voucher: "",
+          user: {
+            name: user._doc.name,
+            email: user._doc.email,
+          },
+        };
+      })
+    );
+
+    return res.status(200).json({
+      message: "Tìm kiếm hóa đơn của bạn thành công!",
+      bill: newData,
+      //billDetails: billDetailData,
     });
   } catch (error) {
     return res.status(500).json({

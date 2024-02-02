@@ -10,6 +10,7 @@ import {
   createBill,
   dailyRevenueAndCategorySales,
   getAllBill,
+  getBillOfUser,
   getOneBill,
 } from "../controllers/bill";
 
@@ -20,6 +21,7 @@ router.get("/", getAllBill);
 router.get("/revenue", dailyRevenueAndCategorySales);
 // router.get("/revenue", revenue);
 router.get("/:id", getOneBill);
+router.get("/user/:id", getBillOfUser);
 router.patch("/:id/changePaymentStatus", Change_PaymentStatus);
 router.patch("/:id/changeOrderStatus", Change_OrderStatus);
 

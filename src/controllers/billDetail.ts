@@ -6,13 +6,6 @@ export const addBillDetail = async (
   BillDetailData: any
 ) => {
   try {
-    const { error } = BillDetailSchema.validate(BillDetailData);
-    if (error) {
-      return res.status(400).json({
-        message: `Validation error: ${error.details[0].message}`,
-      });
-    }
-
     const billdetail = await OrderDetailModel.create(BillDetailData);
     if (!billdetail) {
       return res.status(500).json({

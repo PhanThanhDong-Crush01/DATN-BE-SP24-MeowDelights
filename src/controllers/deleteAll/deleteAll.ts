@@ -9,12 +9,12 @@ import VoucherModel from "../../models/voucher";
 
 export const deleteAllData = async (req: any, res: any) => {
   try {
-    await ProductModel.deleteMany();
-    await TypeProductModel.deleteMany();
-    await CategoryModel.deleteMany();
-    await VoucherModel.deleteMany();
-    await TypeVoucherModel.deleteMany();
-    await AuthModel.deleteMany();
+    // await ProductModel.deleteMany();
+    // await TypeProductModel.deleteMany();
+    // await CategoryModel.deleteMany();
+    // await VoucherModel.deleteMany();
+    // await TypeVoucherModel.deleteMany();
+    // await AuthModel.deleteMany();
     await BillModel.deleteMany();
     await OrderDetailModel.deleteMany();
 

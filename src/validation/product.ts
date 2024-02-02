@@ -13,7 +13,7 @@ export const productSchema = joi.object({
 export const typeProductSchema = joi.object({
   size: joi.string().required(),
   color: joi.string().required(),
-  quantily: joi.number().required(),
+  quantity: joi.number().required(),
   image: joi.string().required(),
   weight: joi.string().required(),
   price: joi.number().required(),
