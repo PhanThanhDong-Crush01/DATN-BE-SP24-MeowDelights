@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const BillSchema = new mongoose.Schema<any>(
   {
     iduser: {
-      type: String,
+      type: Object,
       require: true,
     },
     money: {
@@ -24,7 +24,6 @@ const BillSchema = new mongoose.Schema<any>(
     },
     idvc: {
       type: String,
-      required: true,
     },
     paymentmethods: {
       type: String,

@@ -6,14 +6,14 @@ const OrderDetailSchema = new mongoose.Schema<any>(
       type: Object,
     },
     iduser: {
-      type: String,
+      type: Object,
     },
     idpro: {
-      type: String,
+      type: Object,
       required: true,
     },
     idprotype: {
-      type: String,
+      type: Object,
       required: true,
     },
     quantity: {
