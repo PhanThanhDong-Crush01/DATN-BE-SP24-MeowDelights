@@ -5,10 +5,10 @@ import { create, get, getAll, restore, storage } from "../controllers/product";
 
 const router: Router = express.Router();
 router.get("/", getAll);
-// router.get("/products/:id", get);
-// router.post("/products/:id", create);
+router.get("/:id", get);
+router.post("/", create);
 router.patch("/restore/:id", restore);
 // router.put("/:id/update", authenticate, authorization, update)
-router.patch("/storage/:id/");
+router.patch("/storage/:id/", storage);
 
 export default router;

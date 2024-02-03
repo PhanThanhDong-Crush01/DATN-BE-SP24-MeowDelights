@@ -153,7 +153,7 @@ export const getAll = async (req: any, res: any) => {
         }, typeProducts[0].price);
 
         const totalQuantity = typeProducts.reduce((total, current) => {
-          return total + current.quantily;
+          return total + current.quantity;
         }, 0);
 
         const maxPrice = Math.max(
