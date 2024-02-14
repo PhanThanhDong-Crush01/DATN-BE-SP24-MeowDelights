@@ -1,8 +1,4 @@
 import AuthModel from "../models/auth";
-import auth from "../models/auth";
-import UserModel from "../models/user";
-import user from "../models/user";
-
 export const getUserProfile = async (req, res) => {
   try {
     const datas = await AuthModel.findById(req.params.id);
