@@ -6,7 +6,7 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 
 dotenv.config();
-export const getAllUser = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const user = await auth.find();
     if (user.length === 0) {
@@ -16,6 +16,42 @@ export const getAllUser = async (req, res) => {
     }
     return res.json({
       message: "hiển thị thành công",
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.massage,
+    });
+  }
+};
+export const getOne = async (req, res) => {
+  try {
+    const user = await auth.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        massage: "không có tài khoản nào",
+      });
+    }
+    return res.json({
+      message: "hiển thị thành công",
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.massage,
+    });
+  }
+};
+export const removeUser = async (req, res) => {
+  try {
+    const user = await auth.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        massage: "Xóa tài khoản thất bại",
+      });
+    }
+    return res.json({
+      message: "Xóa tài khoản thành công",
       user,
     });
   } catch (error) {
