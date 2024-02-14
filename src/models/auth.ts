@@ -1,3 +1,51 @@
+// import { boolean } from "joi";
+// import mongoose from "mongoose";
+
+// const authSchema = new mongoose.Schema(
+//   {
+//     name: {
+//       type: String,
+//     },
+//     email: {
+//       type: String,
+//       // required: true,
+//     },
+//     password: {
+//       type: String,
+//     },
+//     role: {
+//       type: String,
+//       default: "member",
+//     },
+//     phone: {
+//       type: String,
+//       default: "",
+//     },
+//     gender: {
+//       type: Boolean,
+//       default: true,
+//     },
+//     age: {
+//       type: Number,
+//       default: 0,
+//     },
+//     address: {
+//       type: String,
+//       default: "",
+//     },
+//     imgUser: {
+//       type: String,
+//       default: "",
+//     },
+//     authorized_accounts: {
+//       type: String,
+//     },
+//   },
+//   { timestamps: true, versionKey: false }
+// );
+
+// const AuthModel = mongoose.model("Auth", authSchema);
+// export default AuthModel;
 import mongoose from "mongoose";
 
 const authSchema = new mongoose.Schema(
