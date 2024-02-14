@@ -46,7 +46,6 @@
 
 // const AuthModel = mongoose.model("Auth", authSchema);
 // export default AuthModel;
-
 import mongoose from "mongoose";
 
 const authSchema = new mongoose.Schema(
@@ -60,7 +59,6 @@ const authSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-
       unique: true, // Ensure email is unique
     },
     password: {
@@ -68,14 +66,12 @@ const authSchema = new mongoose.Schema(
       // required: true,
       // Hash the password before saving to the database
     },
-
     role: {
       type: String,
       default: "member",
     },
     phone: {
       type: String,
-
       default: "",
     },
     gender: {
