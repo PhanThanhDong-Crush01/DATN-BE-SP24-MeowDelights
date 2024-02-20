@@ -6,8 +6,9 @@ import {
   removeVoucher,
   updateVoucher,
 } from "../controllers/voucher";
+import express from "express";
 // import { checkPermission } from "../middlewares/checkPermission";
-const router = Router();
+const router: Router = express.Router();
 router.get("/", getAllVoucher);
 router.get("/:id", getDetailVoucher);
 router.post("/", createVoucher);

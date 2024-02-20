@@ -23,7 +23,7 @@ const voucherSchema = new mongoose.Schema<any>(
       required: true,
     },
     conditions: {
-      type: Number,
+      type: String,
       required: true,
     },
     idTypeVoucher: {
