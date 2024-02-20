@@ -13,10 +13,12 @@ import billDetailRouter from "./billDetail";
 
 import uploadRouter from "./upload";
 import deleteAllDataRouter from "./deleteAllData";
+import routerContact from "./contact";
 
 const router = Router();
 
 router.use("/products", productRouter);
+router.use("/contact", routerContact);
 router.use("/categories", categoryRouter);
 router.use("/cart", cartRouter);
 router.use("/auth", authRouter);
