@@ -19,6 +19,7 @@ export const signupSchema = joi.object({
     "any.only": "Password không khớp",
     "any.required": "Trường confirm password là bắt buộc",
   }),
+  role: joi.string(),
 });
 
 export const signinSchema = joi.object({
