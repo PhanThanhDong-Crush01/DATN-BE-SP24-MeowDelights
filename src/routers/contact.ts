@@ -4,6 +4,7 @@ import {
   getAllContact,
   getOneContact,
   remoteContact,
+  setStaffWithContact,
   updateContact,
 } from "../controllers/contact";
 
@@ -12,6 +13,7 @@ routerContact.get("/", getAllContact);
 routerContact.get("/:id", getOneContact);
 routerContact.post("/", createContact);
 routerContact.patch("/:id", updateContact);
+routerContact.patch("/:id/staff", setStaffWithContact);
 routerContact.delete("/:id", remoteContact);
 
 export default routerContact;
