@@ -156,3 +156,32 @@ export const remoteContact = async (req, res) => {
     });
   }
 };
+export const setStaffWithContact = async (req, res) => {
+  try {
+    const idContacts = req.body.idContacts;
+    const idNV = req.body.idNV;
+
+    const contactData = await Promise.all(
+      idContacts.map(async (idContact) => {
+        const data = await ContactModel.findByIdAndUpdate(
+          idContact,
+          {
+            idNV: idNV,
+          },
+          { new: true }
+        );
+
+        return data;
+      })
+    );
+
+    return res.status(200).json({
+      message: "Giao liên hệ cho Nhân viên thành công!",
+      datas: contactData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
