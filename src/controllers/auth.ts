@@ -138,3 +138,31 @@ export const signin = async (req, res) => {
     });
   } catch (error) {}
 };
+
+export const AuthWithRole = async (req, res) => {
+  try {
+    const role = req.params.id;
+    let permission = "";
+    if (role == 1) {
+      permission = "admin";
+    } else if (role == 2) {
+      permission = "staff";
+    } else {
+      permission = "member";
+    }
+    const user = await auth.find({ role: permission });
+    if (user.length === 0) {
+      return res.status(404).json({
+        massage: "không có tài khoản nào",
+      });
+    }
+    return res.json({
+      message: "hiển thị thành công",
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.massage,
+    });
+  }
+};

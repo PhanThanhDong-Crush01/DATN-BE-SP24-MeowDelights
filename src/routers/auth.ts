@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import {
+  AuthWithRole,
   getAll,
   getOne,
   removeUser,
@@ -17,4 +18,5 @@ router.delete("/:id", removeUser);
 router.patch("/:id", updateUserProfile);
 router.get("/:id", getUserProfile);
 // router.get("/:id", getOne);
+router.get("/:id/permission", AuthWithRole);
 export default router;
