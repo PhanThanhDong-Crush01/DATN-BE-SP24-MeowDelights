@@ -4,6 +4,7 @@ import {
   getAll,
   getOne,
   removeUser,
+  setEmployeeCode,
   signin,
   signup,
 } from "../controllers/auth";
@@ -16,6 +17,7 @@ router.post("/signin", signin);
 router.delete("/:id", removeUser);
 
 router.patch("/:id", updateUserProfile);
+router.patch("/:id/setEmployeeCode", setEmployeeCode);
 router.get("/:id", getUserProfile);
 // router.get("/:id", getOne);
 router.get("/:id/permission", AuthWithRole);
