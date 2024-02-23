@@ -24,16 +24,24 @@ export const updateUserSchema = joi.object({
     "string.empty": "Email không được để trống",
     "any.required": "Trường email là bắt buộc",
   }),
-  phone: joi
-    .string()
-    .pattern(new RegExp(/^(09|03)\d{8}$/))
-    .required()
-    .messages({
-      "string.pattern.base": "Số điện thoại không đúng định dạng",
-      "string.empty": "Số điện thoại không được để trống",
-      "any.required": "Trường số điện thoại là bắt buộc",
-    }),
-  address: joi.string().required(),
-  imgUser: joi.string().required(),
-  authorized_accounts: joi.string().required(),
+  phone: joi.string().messages({
+    "string.pattern.base": "Số điện thoại không đúng định dạng",
+    "string.empty": "Số điện thoại không được để trống",
+    "any.required": "Trường số điện thoại là bắt buộc",
+  }),
+  address: joi.string().required().messages({
+    "string.empty": "Địa chỉ không được để trống",
+  }),
+  imgUser: joi.string().required().messages({
+    "string.empty": "Hình ảnh của người dùng không được để trống",
+    "any.required": "Trường hình ảnh của người dùng là bắt buộc",
+  }),
+  age: joi.number().required().messages({
+    "date.base": "Ngày sinh không đúng định dạng",
+    "any.required": "Trường Ngày Sinh là bắt buộc",
+  }),
+  gender: joi.boolean().required().messages({
+    "any.required": "Trường Giới tính là Bắt Buộc",
+  }),
+  authorized_accounts: joi.string(),
 });
