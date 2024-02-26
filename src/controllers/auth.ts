@@ -6,7 +6,7 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 
 dotenv.config();
-export const getAll = async (req, res) => {
+export const getAllUser = async (req, res) => {
   try {
     const user = await auth.find();
     if (user.length === 0) {
