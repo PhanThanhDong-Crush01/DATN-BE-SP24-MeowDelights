@@ -8,7 +8,7 @@ import cartRouter from "./cart";
 import voucherRouter from "./voucher";
 import myVoucherRouter from "./myVoucher";
 import typeVoucherRouter from "./typeVoucher";
-
+import commentRouter from "./comment";
 import billRouter from "./bill";
 import billDetailRouter from "./billDetail";
 
@@ -25,6 +25,7 @@ router.use("/cart", cartRouter);
 router.use("/auth", authRouter);
 router.use("/voucher", voucherRouter);
 router.use("/my_voucher", myVoucherRouter);
+router.use("/comment", commentRouter);
 router.use("/type_voucher", typeVoucherRouter);
 router.use("/bill", billRouter);
 router.use("/bill_detail", billDetailRouter);
