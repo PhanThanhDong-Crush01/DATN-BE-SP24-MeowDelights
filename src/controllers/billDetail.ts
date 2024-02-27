@@ -1,10 +1,13 @@
 import BillDetailSchema from "../validation/bill";
-import OrderDetailModel from "../models/billdetail";
+import TypeProductModel from "../models/typeProduct";
+import OrderDetailModel from "../models/billDetail";
+
 export const addBillDetail = async (
   req: any,
   res: any,
   BillDetailData: any
 ) => {
+  console.log("🚀 ~ BillDetailData:", BillDetailData);
   try {
     const billdetail = await OrderDetailModel.create(BillDetailData);
     if (!billdetail) {
@@ -12,6 +15,15 @@ export const addBillDetail = async (
         message: "Thêm hóa đơn chi tiết thất bại",
       });
     }
+    const productType: any = await TypeProductModel.findById(
+      BillDetailData.idprotype
+    );
+    const truSoLuongSP = productType?._doc?.quantity - BillDetailData.quantity;
+    const updateQuantity = await TypeProductModel.findByIdAndUpdate(
+      productType._id.toString(),
+      { quantity: truSoLuongSP },
+      { new: true }
+    );
     return true;
   } catch (error) {
     console.error(`Error in create bill detail: ${error.message}`);

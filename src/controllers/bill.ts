@@ -1,9 +1,12 @@
 import AuthModel from "../models/auth";
 import BillModel from "../models/bill";
-import OrderDetailModel from "../models/billdetail";
+import OrderDetailModel from "../models/billDetail";
 import CategoryModel from "../models/category";
+import ProductModel from "../models/product";
+import TypeProductModel from "../models/typeProduct";
 import VoucherModel from "../models/voucher";
 import { addBillDetail } from "./billDetail";
+import { decreaseVoucherQuantity } from "./voucher";
 
 export const createBill = async (req: any, res: any) => {
   try {
@@ -13,7 +16,20 @@ export const createBill = async (req: any, res: any) => {
         message: "Thêm hóa đơn thất bại",
       });
     }
+
+    if (req.body.bill.idvc != "") {
+      decreaseVoucherQuantity(req.body.bill.idvc);
+    }
+
     const idbill = bill._id;
+    const iduser = bill.iduser;
+    const userAuth = await AuthModel.findByIdAndUpdate(
+      iduser,
+      {
+        discount_points: bill.money * 0.03,
+      },
+      { new: true }
+    );
     const billdetails = req.body.billdetails;
     for (const TypeBillDetail of billdetails) {
       const newBillDetail = { ...TypeBillDetail, idbill };
@@ -30,6 +46,7 @@ export const createBill = async (req: any, res: any) => {
       data: {
         bill,
         billdetails: BillDetailData,
+        discount_points: bill.money * 0.03,
       },
     });
   } catch (error) {
@@ -101,7 +118,15 @@ export const getBillOfUser = async (req, res) => {
         const billDetails = await OrderDetailModel.find({
           idbill: item._id,
         });
-
+        const products = await Promise.all(
+          billDetails.map(async (detail: any) => {
+            const product = await ProductModel.findById(detail.idpro);
+            const productType = await TypeProductModel.findById(
+              detail.idprotype
+            ); // Adjust this according to your schema
+            return { product, productType };
+          })
+        );
         // Tính tổng tiền của hóa đơn
         const totalMoney = billDetails.reduce((total: number, current: any) => {
           return total + current.money;
@@ -116,11 +141,28 @@ export const getBillOfUser = async (req, res) => {
         );
 
         const user: any = await AuthModel.findById(item.iduser);
+        console.log("user", user);
         if (item.idvc != "") {
           const voucher: any = await VoucherModel.findById(item.idvc);
           console.log("🚀 ~ data.map ~ voucher:", voucher);
         }
-
+        // // Lấy thông tin chi tiết về sản phẩm từ các chi tiết đơn hàng
+        // const products = await Promise.all(
+        //   billDetails.map(async (detail: any) => {
+        //     const product = await ProductModel.findById(detail.idpro);
+        //     return product;
+        //   })
+        // );
+        // Lấy thông tin chi tiết về sản phẩm và loại sản phẩm từ các chi tiết đơn hàng
+        // const products = await Promise.all(
+        //   billDetails.map(async (detail: any) => {
+        //     const product = await ProductModel.findById(detail.idpro);
+        //     const productType = await TypeProductModel.findById(
+        //       detail.idprotype
+        //     );
+        //     return { product, productType };
+        //   })
+        // );
         // Trả về thông tin cơ bản của hóa đơn cùng với tổng số lượng và tổng tiền
         return {
           _id: item._id,
@@ -141,6 +183,7 @@ export const getBillOfUser = async (req, res) => {
             name: user._doc.name,
             email: user._doc.email,
           },
+          products: products,
         };
       })
     );
@@ -388,6 +431,24 @@ export const dailyRevenueAndCategorySales = async (req, res) => {
       dailyRevenue: dailyRevenue,
       accessorySales: accessorySales,
       foodSales: foodSales,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const removeBill = async (req, res) => {
+  try {
+    const data = await BillModel.findByIdAndDelete(req.params.id);
+    if (!data) {
+      return res.status(404).json({
+        message: "Xóa khuyến mại thất bại",
+      });
+    }
+    return res.status(200).json({
+      message: "Xóa khuyến mại thành công",
+      datas: data,
     });
   } catch (error) {
     return res.status(500).json({

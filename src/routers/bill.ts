@@ -12,6 +12,7 @@ import {
   getAllBill,
   getBillOfUser,
   getOneBill,
+  removeBill,
 } from "../controllers/bill";
 
 // import { checkPermission } from "../middlewares/checkPermission";
@@ -21,6 +22,8 @@ router.get("/", getAllBill);
 router.get("/revenue", dailyRevenueAndCategorySales);
 // router.get("/revenue", revenue);
 router.get("/:id", getOneBill);
+router.delete("/:id", removeBill);
+router.get("/user/:id", getBillOfUser);
 router.get("/user/:id", getBillOfUser);
 router.patch("/:id/changePaymentStatus", Change_PaymentStatus);
 router.patch("/:id/changeOrderStatus", Change_OrderStatus);
