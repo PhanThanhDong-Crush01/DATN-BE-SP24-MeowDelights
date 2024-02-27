@@ -92,6 +92,8 @@ const authSchema = new mongoose.Schema(
     },
     authorized_accounts: {
       type: String,
+
+      required: false,
     },
   },
   { timestamps: true, versionKey: false }

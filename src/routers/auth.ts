@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import {
   AuthWithRole,
-  getAll,
+  getAllUser,
   getOne,
   removeUser,
   setEmployeeCode,
@@ -11,7 +11,7 @@ import {
 import { getUserProfile, updateUserProfile } from "../controllers/user";
 
 const router: Router = express.Router();
-router.get("/", getAll);
+router.get("/", getAllUser);
 router.post("/signup", signup);
 router.post("/signin", signin);
 router.delete("/:id", removeUser);

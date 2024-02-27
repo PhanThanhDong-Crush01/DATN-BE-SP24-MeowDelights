@@ -6,7 +6,7 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 
 dotenv.config();
-export const getAll = async (req, res) => {
+export const getAllUser = async (req, res) => {
   try {
     const user = await auth.find();
     if (user.length === 0) {
@@ -170,7 +170,7 @@ export const AuthWithRole = async (req, res) => {
 export const setEmployeeCode = async (req, res) => {
   try {
     const user: any = await auth.find();
-    
+
     const employeeCode = await Promise.all(
       user.map(async (item) => {
         if (item._doc.role == "admin" || item._doc.role == "staff") {
