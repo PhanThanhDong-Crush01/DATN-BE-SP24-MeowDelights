@@ -17,7 +17,7 @@ export const typeProductSchema = joi.object({
   image: joi.string().required(),
   weight: joi.string().required(),
   price: joi.number().required(),
-  idPro: joi.object().required(),
+  idPro: joi.string().required(),
 });
 
 // // export const categoryProductSchema = joi.object().shape({

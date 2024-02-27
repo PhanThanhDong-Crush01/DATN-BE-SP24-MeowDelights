@@ -1,3 +1,4 @@
+import OrderDetailModel from "../models/billdetail";
 import CategoryModel from "../models/category";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
@@ -48,32 +49,85 @@ export const create = async (req: any, res: any) => {
 
 export const get = async function (req, res) {
   try {
-    const product = await ProductModel.findById(req.params.id);
+    const productId = req.params.id;
+
+    // Lấy thông tin sản phẩm
+    const product: any = await ProductModel.findById(productId);
     if (!product) {
       return res.json({
         message: "Không có sản phẩm nào",
       });
     }
 
-    const types_a_pro = await TypeProductModel.find({
-      idPro: product._id,
-    });
+    // Lấy các loại sản phẩm của sản phẩm này
+    const typeProductData: any = await TypeProductModel.find();
+    const typeProducts: any = typeProductData.filter(
+      (item: any) => item._doc.idPro == productId
+    );
 
     // Tính toán giá và số lượng từ loại sản phẩm
-    const minPrice = Math.min(...types_a_pro.map((type) => type.price));
-    const maxPrice = Math.max(...types_a_pro.map((type) => type.price));
-    const totalQuantity = types_a_pro.reduce(
-      (total, type) => total + type.quantily,
-      0
-    );
+    const minPrice = Math.min(...typeProducts.map((type) => type.price));
+    const maxPrice = Math.max(...typeProducts.map((type) => type.price));
+
+    let totalQuantity = 0;
+    typeProducts.forEach((item: any) => {
+      totalQuantity += item.quantity;
+    });
+
+    // Tạo một mảng để lưu thông tin của từng loại sản phẩm
+    const typeProductInfo: any = [];
+    // Duyệt qua từng loại sản phẩm
+    for (const typeProduct of typeProducts) {
+      // Tính tổng số lượng đã bán của loại sản phẩm hiện tại
+      const soldQuantity = await OrderDetailModel.aggregate([
+        {
+          $match: { idprotype: typeProduct._doc._id.toString() }, // Lọc theo id loại sản phẩm
+        },
+        {
+          $group: {
+            _id: null,
+            totalSold: { $sum: "$quantity" }, // Tính tổng số lượng đã bán
+          },
+        },
+      ]);
+
+      // Tính tổng số tiền đã bán của loại sản phẩm hiện tại
+      const soldAmount = await OrderDetailModel.aggregate([
+        {
+          $match: { idprotype: typeProduct._doc._id.toString() }, // Lọc theo id loại sản phẩm
+        },
+        {
+          $group: {
+            _id: null,
+            totalAmount: { $sum: "$money" }, // Tính tổng số tiền đã bán
+          },
+        },
+      ]);
+
+      if (soldQuantity.length > 0) {
+        // Đưa thông tin của loại sản phẩm vào mảng
+        typeProductInfo.push({
+          typeProductId: typeProduct._id,
+          color: typeProduct.color,
+          size: typeProduct.size,
+          quantity: typeProduct.quantity,
+          image: typeProduct.image,
+          weight: typeProduct.weight,
+          price: typeProduct.price,
+          soldQuantity: soldQuantity.length > 0 ? soldQuantity[0].totalSold : 0,
+          soldAmount: soldAmount.length > 0 ? soldAmount[0].totalAmount : 0,
+        });
+      }
+    }
 
     return res.json({
       message: "Tìm sản phẩm thành công",
       data: product,
-      typeProduct: types_a_pro,
       minPrice: minPrice,
       maxPrice: maxPrice,
       totalQuantity: totalQuantity,
+      typeProduct: typeProducts,
+      typeProduct_bill: typeProductInfo,
     });
   } catch (error) {
     return res.status(400).json({
@@ -115,7 +169,7 @@ export const update = async (req: any, res: any) => {
 export const getAll = async (req: any, res: any) => {
   try {
     const {
-      _sort = "price",
+      _sort = "createdAt",
       _order = "asc",
       _limit = 50,
       _page = 1,
@@ -128,7 +182,7 @@ export const getAll = async (req: any, res: any) => {
         [_sort]: _order === "desc" ? -1 : 1,
       },
     };
-    // const { data } = await axios.get(`${API_URL}/Product`);
+
     const data = await ProductModel.paginate({}, options);
 
     if (!data || data.docs.length === 0) {
@@ -139,49 +193,87 @@ export const getAll = async (req: any, res: any) => {
 
     const newData = await Promise.all(
       data.docs.map(async (itemPro: any) => {
-        const typeProducts = await TypeProductModel.find({
-          idPro: itemPro._id,
-        });
+        try {
+          const typeProducts = await TypeProductModel.find({
+            idPro: itemPro._id,
+          });
 
-        // Kiểm tra nếu typeProducts rỗng
-        if (typeProducts.length === 0) {
-          return { ...itemPro._doc, price: null }; // hoặc giá trị mặc định khác nếu cần thiết
+          // Tính toán số lượng sản phẩm đã bán và tổng số tiền đã bán
+          const soldData = await OrderDetailModel.aggregate([
+            {
+              $match: { idpro: itemPro._id.toString() }, // Lọc theo id sản phẩm
+            },
+            {
+              $group: {
+                _id: null,
+                totalSold: { $sum: "$quantity" }, // Tính tổng số lượng sản phẩm đã bán
+                totalAmount: { $sum: "$money" }, // Tính tổng số tiền bán được
+              },
+            },
+          ]);
+
+          // Nếu có dữ liệu về số lượng sản phẩm đã bán, gán cho thuộc tính soldQuantity, soldAmount
+          const soldQuantity = soldData.length > 0 ? soldData[0].totalSold : 0;
+          const soldAmount = soldData.length > 0 ? soldData[0].totalAmount : 0;
+
+          const prices = typeProducts.map((product: any) => product.price);
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          const totalQuantity = typeProducts.reduce(
+            (total: number, current: any) => total + current.quantity,
+            0
+          );
+
+          const colors = Array.from(
+            new Set(typeProducts.map((product: any) => product.color))
+          );
+          const sizes = Array.from(
+            new Set(typeProducts.map((product: any) => product.size))
+          );
+          const averagePrice = Math.floor(
+            prices.reduce(
+              (total: number, current: number) => total + current,
+              0
+            ) / prices.length
+          );
+
+          const category = await CategoryModel.findById(itemPro.idCategory);
+
+          return {
+            ...itemPro._doc,
+            totalQuantity,
+            minPrice,
+            maxPrice,
+            averagePrice,
+            colors,
+            sizes,
+            categoryName: category ? category._doc.name : null,
+            soldQuantity, // Thêm thuộc tính soldQuantity vào đối tượng sản phẩm
+            soldAmount, // Thêm thuộc tính soldAmount vào đối tượng sản phẩm
+          };
+        } catch (error) {
+          console.error("Error in processing product:", error);
+          return null;
         }
-
-        const minPrice = typeProducts.reduce((min, current) => {
-          return current.price < min ? current.price : min;
-        }, typeProducts[0].price);
-
-        const totalQuantity = typeProducts.reduce((total, current) => {
-          return total + current.quantity;
-        }, 0);
-
-        const maxPrice = Math.max(
-          ...typeProducts.map((product) => product.price)
-        );
-
-        const category = await CategoryModel.findById(itemPro.idCategory);
-
-        return {
-          ...itemPro._doc,
-          minPrice: minPrice,
-          totalQuantity,
-          maxPrice,
-          categoryName: category ? category.name : null,
-        };
       })
     );
 
+    // Lọc ra các sản phẩm không thành công
+    const filteredData = newData.filter((item) => item !== null);
+
     return res.status(200).json({
       message: "Gọi danh sách sản phẩm thành công!",
-      datas: newData,
+      datas: filteredData,
     });
   } catch (error) {
+    console.error("Error in getAll:", error);
     return res.status(500).json({
       message: error.message,
     });
   }
-}; //phân trang, lọc, xắp xếp
+};
+
+//phân trang, lọc, xắp xếp
 export const storage = async (req: any, res: any) => {
   try {
     const id = req.params.id;

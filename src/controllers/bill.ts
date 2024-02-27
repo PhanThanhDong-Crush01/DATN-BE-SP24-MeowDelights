@@ -4,6 +4,7 @@ import OrderDetailModel from "../models/billdetail";
 import CategoryModel from "../models/category";
 import VoucherModel from "../models/voucher";
 import { addBillDetail } from "./billDetail";
+import { decreaseVoucherQuantity } from "./voucher";
 
 export const createBill = async (req: any, res: any) => {
   try {
@@ -13,7 +14,20 @@ export const createBill = async (req: any, res: any) => {
         message: "Thêm hóa đơn thất bại",
       });
     }
+
+    if (req.body.bill.idvc != "") {
+      decreaseVoucherQuantity(req.body.bill.idvc);
+    }
+
     const idbill = bill._id;
+    const iduser = bill.iduser;
+    const userAuth = await AuthModel.findByIdAndUpdate(
+      iduser,
+      {
+        discount_points: bill.money * 0.03,
+      },
+      { new: true }
+    );
     const billdetails = req.body.billdetails;
     for (const TypeBillDetail of billdetails) {
       const newBillDetail = { ...TypeBillDetail, idbill };
@@ -30,6 +44,7 @@ export const createBill = async (req: any, res: any) => {
       data: {
         bill,
         billdetails: BillDetailData,
+        discount_points: bill.money * 0.03,
       },
     });
   } catch (error) {

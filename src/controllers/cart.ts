@@ -6,17 +6,13 @@ import ProductModel from "../models/product";
 export const create = async (req: any, res: any) => {
   try {
     const cartItem = req.body;
-    const iduser = cartItem.iduser; // Correctly access iduser from cartItem
-    const idpro = cartItem.idpro; // Correctly access idpro from cartItem
-    const idprotype = cartItem.idprotype; // Correctly access idprotype from cartItem
-    const quantity = cartItem.quantity; // Correctly access quantity from cartItem
+    const iduser = cartItem.iduser;
+    const idpro = cartItem.idpro;
+    const idprotype = cartItem.idprotype;
+    const quantity = cartItem.quantity;
 
     const priceTypePro: any = await TypeProductModel.findById(idprotype);
-    if (!priceTypePro) {
-      return res.status(404).json({
-        message: "Không có loại sản phẩm này",
-      });
-    }
+
     const userCartItem: any = await OrderDetailModel.findOne({
       iduser: iduser,
       idpro: idpro,
@@ -96,7 +92,7 @@ export const update = async (req: any, res: any) => {
   } catch (error) {
     console.error(`Error in create cart item: ${error.message}`);
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: "Internal Server Error: " + error.message,
     });
   }
 };
