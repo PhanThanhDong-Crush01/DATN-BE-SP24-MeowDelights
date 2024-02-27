@@ -1,6 +1,5 @@
-import BillDetailSchema from "../validation/bill";
 import TypeProductModel from "../models/typeProduct";
-import OrderDetailModel from "../models/billDetail";
+import OrderDetailModel from "../models/billdetail";
 
 export const addBillDetail = async (
   req: any,
