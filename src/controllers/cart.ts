@@ -1,8 +1,6 @@
-import BillDetailSchema from "../validation/bill"; // Import BillDetailSchema from the correct path
-
 import TypeProductModel from "../models/typeProduct";
 import ProductModel from "../models/product";
-import OrderDetailModel from "../models/billDetail";
+import OrderDetailModel from "../models/billdetail";
 
 export const create = async (req: any, res: any) => {
   try {
