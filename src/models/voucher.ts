@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
-    codevc: {
-      type: Number,
+    name: {
+      type: String,
       required: true,
     },
     status: {
-      type: String,
+      type: Boolean,
+      required: true,
+    },
+    quantity: {
+      type: Number,
       required: true,
     },
     decrease: {
