@@ -2,6 +2,7 @@ import AuthModel from "../models/auth";
 import BillModel from "../models/bill";
 import OrderDetailModel from "../models/billdetail";
 import CategoryModel from "../models/category";
+import ChangeBillHistoryModel from "../models/changeBillHistory";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import VoucherModel from "../models/voucher";
@@ -91,10 +92,35 @@ export const getOneBill = async (req, res) => {
       idbill: data._id,
     });
 
+    const billChangeStatusOrderHistoryData = await ChangeBillHistoryModel.find({
+      idBill: data._id,
+    });
+    console.log(
+      "🚀 ~ getOneBill ~ billChangeStatusOrderHistoryData:",
+      billChangeStatusOrderHistoryData
+    );
+
+    const billChangeStatusOrderHistory = await Promise.all(
+      billChangeStatusOrderHistoryData.map(async (item: any) => {
+        const staff: any = await AuthModel.findById(item?._doc?.idStaff);
+        if (!staff) {
+          return res.status(500).json({
+            message: "Không tìm thấy nhân viên!",
+          });
+        }
+
+        const user = staff._doc;
+        return {
+          changeStatusOrder: { ...item?._doc, staff: user },
+        };
+      })
+    );
+
     return res.status(200).json({
       message: "Tìm kiếm hóa đơn thành công!",
       bill: data,
       billDetails: billDetailData,
+      billChangeStatusOrderHistory,
     });
   } catch (error) {
     return res.status(500).json({
@@ -232,6 +258,7 @@ export const Change_OrderStatus = async (req, res) => {
   try {
     const idBill = req.params.id;
     const newOrderStatus = req.body.orderstatus;
+    const idStaff = req.body.idStaff;
 
     // Lấy đơn hàng hiện tại
     const currentBill = await BillModel.findById(idBill);
@@ -272,9 +299,21 @@ export const Change_OrderStatus = async (req, res) => {
       });
     }
 
+    const changeBillHistory = {
+      idBill: idBill,
+      idStaff: idStaff,
+      statusOrder: newOrderStatus,
+    };
+    const changeOrder = await ChangeBillHistoryModel.create(changeBillHistory);
+    if (!data) {
+      return res.status(404).json({
+        message: "Không thể lưu lịch sử thay đổi trạng thái!",
+      });
+    }
     return res.status(200).json({
       message: "Thay đổi trạng thái của đơn hàng thành công!",
       bill: data,
+      changeOrder,
     });
   } catch (error) {
     return res.status(500).json({
