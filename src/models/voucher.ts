@@ -2,23 +2,19 @@ import mongoose from "mongoose";
 
 const voucherSchema = new mongoose.Schema<any>(
   {
-    name: {
+    CodeVC: {
+      type: Number,
+      required: true,
+    },
+    Status: {
       type: String,
       required: true,
     },
-    status: {
-      type: Boolean,
-      required: true,
-    },
-    quantity: {
+    Decrease: {
       type: Number,
       required: true,
     },
-    decrease: {
-      type: Number,
-      required: true,
-    },
-    expiry: {
+    Expiry: {
       type: String,
       required: true,
     },
