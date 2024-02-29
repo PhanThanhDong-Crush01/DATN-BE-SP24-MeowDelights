@@ -18,7 +18,7 @@ const voucherSchema = new mongoose.Schema<any>(
       type: String,
       required: true,
     },
-    Conditions: {
+    conditions: {
       type: Number,
       required: true,
     },
