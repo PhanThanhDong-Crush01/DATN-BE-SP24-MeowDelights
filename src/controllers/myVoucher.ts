@@ -20,7 +20,8 @@ export const createMyVoucher = async (req, res) => {
 };
 export const getAllMyVoucher = async (req, res) => {
   try {
-    const data = await MyVoucherModel.find();
+    const idUser = req.query.id;
+    const data = await MyVoucherModel.find({ idUser: idUser });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",
