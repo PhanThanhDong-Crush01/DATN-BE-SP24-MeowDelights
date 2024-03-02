@@ -109,12 +109,15 @@ export const getAllVoucher = async (req, res) => {
 export const getDetailVoucher = async (req, res) => {
   try {
     const data = await Voucher.findById(req.params.id);
+    // console.log(data);
     if (!data) {
       return res.status(404).json({
         message: "Lấy khuyến mại chi tiết thất bại",
       });
     }
-    const typeVoucher = await TypeVoucherModel.findById(data.idTypeVoucher);
+    const typeVoucher = await TypeVoucherModel.findById(
+      data?._doc?.idTypeVoucher
+    );
 
     return res.status(200).json({
       message: "Lấy khuyến mại chi tiết thành công",
