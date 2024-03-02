@@ -1,5 +1,5 @@
 export interface IVoucher {
-  _idvoucher: string;
+  _id: string;
   name: string;
   status: string;
   decrease: number;
