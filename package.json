@@ -19,6 +19,7 @@
     },
     "homepage": "https://github.com/datlt2306/web503#readme",
     "dependencies": {
+        "@aws-sdk/client-sns": "^3.523.0",
         "axios": "^1.3.4",
         "bcryptjs": "^2.4.3",
         "concurrently": "^8.2.2",
