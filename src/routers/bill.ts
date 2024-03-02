@@ -14,10 +14,16 @@ import {
   getOneBill,
   removeBill,
 } from "../controllers/bill";
+import {
+  WhyCancelOrder,
+  getAllWhyCancelOrder,
+} from "../controllers/WhyCancelOrder";
 
 // import { checkPermission } from "../middlewares/checkPermission";
 const router = Router();
 router.post("/", createBill);
+router.post("/whyCanCelOrder", WhyCancelOrder);
+router.get("/whyCanCelOrder", getAllWhyCancelOrder);
 router.get("/", getAllBill);
 router.get("/revenue", dailyRevenueAndCategorySales);
 // router.get("/revenue", revenue);
