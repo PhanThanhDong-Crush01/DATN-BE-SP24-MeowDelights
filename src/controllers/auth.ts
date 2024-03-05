@@ -5,7 +5,9 @@ import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import BillModel from "../models/bill";
-import OrderDetailModel from "../models/billDetail";
+import OrderDetailModel from "../models/bill_detail_model";
+import VoucherModel from "../models/voucher";
+import MyVoucherModel from "../models/myVoucher";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
@@ -131,6 +133,16 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60,
     });
+    const ListVoucher = await VoucherModel.find();
+    console.log("🚀 ~ signup ~ ListVoucher:", ListVoucher);
+    ListVoucher.map(async (voucher) => {
+      await MyVoucherModel.create({
+        idVoucher: voucher._id,
+        idUser: user._id,
+        quantity: 1,
+      });
+    });
+
     return res.status(201).json({
       message: "Đăng ký thành công",
       accessToken: token,

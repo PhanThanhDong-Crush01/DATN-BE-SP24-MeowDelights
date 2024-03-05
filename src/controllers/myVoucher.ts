@@ -1,5 +1,6 @@
 import MyVoucherModel from "../models/myVoucher";
 import TypeVoucherModel from "../models/typeVoucher";
+import VoucherModel from "../models/voucher";
 export const createMyVoucher = async (req, res) => {
   try {
     const data = await MyVoucherModel.create(req.body);
@@ -20,16 +21,29 @@ export const createMyVoucher = async (req, res) => {
 };
 export const getAllMyVoucher = async (req, res) => {
   try {
-    const idUser = req.query.id;
+    const idUser = req.params.id;
     const data = await MyVoucherModel.find({ idUser: idUser });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",
       });
     }
+
+    const myVoucher = await Promise.all(
+      data.map(async (item) => {
+        console.log("🚀 ~ data.map ~ item:", item);
+        const voucher = await VoucherModel.findById(item?._doc?.idVoucher);
+        if (voucher !== null) {
+          return { ...item?._doc, voucher };
+        }
+      })
+    );
+    // Filter out null vouchers
+    const validVouchers = myVoucher.filter((voucher) => voucher !== undefined);
+
     return res.status(200).json({
-      message: "lấy danh sách khuyến mại thành công",
-      datas: data,
+      message: "Lấy danh sách khuyến mại thành công",
+      datas: validVouchers,
     });
   } catch (error) {
     return res.status(500).json({
