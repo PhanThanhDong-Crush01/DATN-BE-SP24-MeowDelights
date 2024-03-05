@@ -4,19 +4,57 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
+import BillModel from "../models/bill";
+import OrderDetailModel from "../models/billDetail";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
   try {
-    const user = await auth.find();
-    if (user.length === 0) {
+    const users = await auth.find();
+    if (users.length === 0) {
       return res.status(404).json({
         massage: "không có tài khoản nào",
       });
     }
+    const usersWithStats = await Promise.all(
+      users.map(async (user) => {
+        // Lấy danh sách hóa đơn của người dùng
+        const userBills = await OrderDetailModel.find({
+          iduser: user._id,
+        });
+        console.log(userBills);
+        // Tính tổng số hóa đơn
+        const totalBillCount = userBills.length;
+        console.log(totalBillCount);
+        // Tính tổng tiền đã mua
+        const totalAmount = userBills.reduce(
+          (acc, datas) => acc + datas.money,
+          0
+        );
+        console.log(totalAmount);
+
+        // Trả về thông tin người dùng kèm theo số hóa đơn và tổng tiền đã mua
+        return {
+          _id: user._id,
+          username: user.name,
+          email: user.email,
+          role: user.role,
+          address: user.address,
+          age: user.age,
+          gender: user.gender,
+          imgUser: user.imgUser,
+          phone: user.phone,
+          employee: user.employee,
+          discount_points: user.discount_points,
+          totalBillCount: totalBillCount,
+          totalAmount: totalAmount,
+        };
+      })
+    );
+
     return res.json({
-      message: "hiển thị thành công",
-      user,
+      message: "Hiển thị thành công",
+      users: usersWithStats,
     });
   } catch (error) {
     return res.status(400).json({
@@ -42,6 +80,7 @@ export const getOne = async (req, res) => {
     });
   }
 };
+
 export const removeUser = async (req, res) => {
   try {
     const user = await auth.findByIdAndDelete(req.params.id);

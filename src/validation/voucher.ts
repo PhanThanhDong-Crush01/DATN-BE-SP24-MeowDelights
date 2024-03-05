@@ -6,7 +6,7 @@ const voucherSchema = Joi.object({
   quantity: Joi.number().required(),
   decrease: Joi.number().required().min(0),
   expiry: Joi.string().required(),
-  conditions: Joi.string().required(),
+  conditions: Joi.number().required(),
   idTypeVoucher: Joi.string().required(),
 });
 
