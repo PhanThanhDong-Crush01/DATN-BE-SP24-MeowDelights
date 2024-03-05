@@ -8,7 +8,7 @@ const voucherSchema = new mongoose.Schema<any>(
     },
     status: {
       type: Boolean,
-      required: true,
+      // required: true,
     },
     quantity: {
       type: Number,
@@ -23,11 +23,11 @@ const voucherSchema = new mongoose.Schema<any>(
       required: true,
     },
     conditions: {
-      type: String,
+      type: Number,
       required: true,
     },
     idTypeVoucher: {
-      type: mongoose.Types.ObjectId,
+      type: String,
       required: true,
     },
   },

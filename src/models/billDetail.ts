@@ -1,19 +1,22 @@
+import { string } from "joi";
 import mongoose from "mongoose";
 
 const OrderDetailSchema = new mongoose.Schema<any>(
   {
     idbill: {
-      type: Object,
+      type: String,
+      required: true,
     },
     iduser: {
-      type: Object,
+      type: String,
+      // required: true,
     },
     idpro: {
-      type: Object,
+      type: String,
       required: true,
     },
     idprotype: {
-      type: Object,
+      type: String,
       required: true,
     },
     quantity: {
