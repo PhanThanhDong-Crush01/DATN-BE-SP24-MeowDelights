@@ -85,9 +85,20 @@ export const getAllVoucher = async (req, res) => {
         message: "lấy danh sách khuyến mại thất bại",
       });
     }
+
+    const voucher = await Promise.all(
+      data.map(async (item) => {
+        const type_voucher = await TypeVoucherModel.findById(
+          item?._doc?.idTypeVoucher
+        );
+
+        return { ...item._doc, type_voucher };
+      })
+    );
+
     return res.status(200).json({
       message: "lấy danh sách khuyến mại thành công",
-      datas: data,
+      datas: voucher,
     });
   } catch (error) {
     return res.status(500).json({
@@ -98,12 +109,15 @@ export const getAllVoucher = async (req, res) => {
 export const getDetailVoucher = async (req, res) => {
   try {
     const data = await Voucher.findById(req.params.id);
+    // console.log(data);
     if (!data) {
       return res.status(404).json({
         message: "Lấy khuyến mại chi tiết thất bại",
       });
     }
-    const typeVoucher = await TypeVoucherModel.findById(data.idTypeVoucher);
+    const typeVoucher = await TypeVoucherModel.findById(
+      data?._doc?.idTypeVoucher
+    );
 
     return res.status(200).json({
       message: "Lấy khuyến mại chi tiết thành công",

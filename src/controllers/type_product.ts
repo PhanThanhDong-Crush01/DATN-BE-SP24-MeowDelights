@@ -8,13 +8,6 @@ export const create_type_product = async (
   typeProductData: any
 ) => {
   try {
-    const { error } = typeProductSchema.validate(typeProductData);
-    if (error) {
-      return res.status(400).json({
-        message: `Validation error: ${error.details[0].message}`,
-      });
-    }
-
     const type_product = await TypeProductModel.create(typeProductData);
     if (!type_product) {
       return res.status(500).json({
@@ -55,6 +48,87 @@ export const update = async (req: any, res: any) => {
     });
   } catch (error) {
     return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+export const create = async (req, res) => {
+  try {
+    const data: any = await TypeProductModel.create(req.body);
+    if (!data) {
+      return res.status(404).json({
+        message: "Tạo loại sản phẩm mới thất bại",
+      });
+    }
+    return res.status(200).json({
+      message: "Tạo loại sản phẩm mới thành công",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
+      message: error.message,
+    });
+  }
+};
+
+export const getDetail = async (req, res) => {
+  try {
+    const data = await TypeProductModel.findById(req.params.id);
+    if (!data) {
+      return res.status(404).json({
+        message: "Loại sản phẩm không tồn tại",
+      });
+    }
+    return res.status(200).json({
+      message: "Chi tiết loại sản phẩm",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
+      message: error.message,
+    });
+  }
+};
+
+export const remove = async (req, res) => {
+  try {
+    const data = await TypeProductModel.findByIdAndDelete(req.params.id);
+    if (!data) {
+      return res.status(404).json({
+        message: "Không thể xóa loại sản phẩm",
+      });
+    }
+    return res.status(200).json({
+      message: "Xóa loại sản phẩm thành công",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
+      message: error.message,
+    });
+  }
+};
+
+export const getAll = async (req, res) => {
+  try {
+    const data = await TypeProductModel.find();
+    if (!data) {
+      return res.status(404).json({
+        message: "Loại sản phẩm không tồn tại",
+      });
+    }
+    const newData = data.filter((item) => item.idPro == req.params.id);
+    return res.status(200).json({
+      message: "Danh sách loại sản phẩm",
+      data: newData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
       message: error.message,
     });
   }

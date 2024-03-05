@@ -14,14 +14,14 @@ export const create = async (req: any, res: any) => {
       });
     }
 
-    const product = await ProductModel.create(req.body.product);
+    const product: any = await ProductModel.create(req.body.product);
     if (!product) {
       return res.json({
         message: "Thêm sản phẩm thất bại",
       });
     }
 
-    const idPro = product._id;
+    const idPro = product?._doc?._id;
     const typeProducts = req.body.typeProduct;
     for (const typePro of typeProducts) {
       const newTypeProduct = { ...typePro, idPro };
