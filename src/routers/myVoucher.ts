@@ -9,8 +9,8 @@ import {
   updateMyVoucher,
 } from "../controllers/myVoucher";
 const router: Router = express.Router();
-router.get("/", getAllMyVoucher);
-router.get("/:id", getDetailMyVoucher);
+router.get("/user/:id", getAllMyVoucher);
+router.get("/detail/:id", getDetailMyVoucher);
 router.post("/", createMyVoucher);
 router.patch("/:id", updateMyVoucher);
 router.delete("/:id", removeMyVoucher);

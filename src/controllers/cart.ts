@@ -1,6 +1,6 @@
 import TypeProductModel from "../models/typeProduct";
 import ProductModel from "../models/product";
-import OrderDetailModel from "../models/billdetail";
+import OrderDetailModel from "../models/bill_detail_model";
 
 export const create = async (req: any, res: any) => {
   try {
