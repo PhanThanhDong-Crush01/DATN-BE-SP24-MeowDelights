@@ -50,9 +50,6 @@ import mongoose from "mongoose";
 
 const authSchema = new mongoose.Schema(
   {
-    employee: {
-      type: String,
-    },
     name: {
       type: String,
     },
@@ -92,6 +89,14 @@ const authSchema = new mongoose.Schema(
     },
     discount_points: {
       type: Number,
+    },
+    jobPosition: {
+      type: String,
+      default: "",
+    },
+    employee: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true, versionKey: false }
