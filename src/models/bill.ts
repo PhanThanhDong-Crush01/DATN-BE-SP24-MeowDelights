@@ -1,9 +1,10 @@
+import { string } from "joi";
 import mongoose from "mongoose";
 
 const BillSchema = new mongoose.Schema<any>(
   {
     iduser: {
-      type: Object,
+      type: String,
       require: true,
     },
     money: {

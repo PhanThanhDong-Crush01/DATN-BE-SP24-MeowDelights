@@ -12,7 +12,7 @@ export const BillSchema = Joi.object({
 });
 const BillDetailSchema = Joi.object({
   idbill: Joi.object(),
-  iduser: Joi.object(),
+  iduser: Joi.object().required(),
   idpro: Joi.object().required(),
   idprotype: Joi.object().required(),
   quantity: Joi.number().required().min(0),
