@@ -5,7 +5,9 @@ import TypeVoucherModel from "../models/typeVoucher";
 import Voucher from "../models/voucher";
 export const createVoucher = async (req, res) => {
   try {
-    const data = await Voucher.create(req.body);
+    const voucher = req.body.voucher;
+    const phanPhatVoucher = req.body.phanPhatVoucher;
+    const data = await Voucher.create(voucher);
     if (!data) {
       return res.status(404).json({
         message: "tạo khuyến mãi thất bại",
@@ -16,53 +18,26 @@ export const createVoucher = async (req, res) => {
     const user: any = await AuthModel.find();
     const userMoney = await Promise.all(
       user.map(async (item) => {
-        const bills = await BillModel.find({
-          iduser: item?._doc?._id.toString(),
+        phanPhatVoucher.map(async (item) => {
+          if (item.totalAmount > item.minTotalBill) {
+            await MyVoucherModel.create({
+              idVoucher: idVoucher,
+              idUser: item?._doc?._id.toString(),
+              quantity: item.quantity,
+            });
+          } else if (item.totalAmount == 0) {
+            await MyVoucherModel.create({
+              idVoucher: idVoucher,
+              idUser: item?._doc?._id.toString(),
+              quantity: 1,
+            });
+          }
         });
 
-        let totalBill = 0;
-        bills.forEach((bill) => {
-          totalBill += bill.money;
-        });
-
-        if (totalBill > 1000000) {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 7,
-          });
-        } else if (totalBill > 700000) {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 6,
-          });
-        } else if (totalBill > 500000) {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 5,
-          });
-        } else if (totalBill > 300000) {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 4,
-          });
-        } else if (totalBill > 100000) {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 3,
-          });
-        } else {
-          await MyVoucherModel.create({
-            idVoucher: idVoucher,
-            idUser: item?._doc?._id.toString(),
-            quantity: 1,
-          });
-        }
-        return { userId: item?._doc?._id.toString(), totalBill: totalBill };
+        return {
+          userId: item?._doc?._id.toString(),
+          totalBill: item.totalAmount,
+        };
       })
     );
 
@@ -88,8 +63,12 @@ export const getAllVoucher = async (req, res) => {
 
     const voucher = await Promise.all(
       data.map(async (item) => {
+        console.log(
+          "🚀 ~ data.map ~ item:",
+          item?._doc?.idTypeVoucher.toString()
+        );
         const type_voucher = await TypeVoucherModel.findById(
-          item?._doc?.idTypeVoucher
+          item?._doc?.idTypeVoucher.toString()
         );
 
         return { ...item._doc, type_voucher };
