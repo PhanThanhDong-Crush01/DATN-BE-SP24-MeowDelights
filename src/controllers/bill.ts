@@ -1,6 +1,6 @@
 import AuthModel from "../models/auth";
 import BillModel from "../models/bill";
-import OrderDetailModel from "../models/billdetail";
+import OrderDetailModel from "../models/billDetail";
 
 import CategoryModel from "../models/category";
 import ChangeBillHistoryModel from "../models/changeBillHistory";

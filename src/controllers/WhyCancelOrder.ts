@@ -1,4 +1,5 @@
 import WhyCancelOrderModel from "../models/WhyCancelOrder";
+import BillModel from "../models/bill";
 import whyCancelOrderSchema from "../validation/whycancenorder";
 
 export const WhyCancelOrder = async (req, res) => {
@@ -10,10 +11,10 @@ export const WhyCancelOrder = async (req, res) => {
       });
     }
     // Trích xuất dữ liệu từ req.body
-    const { iduser, idpro, idprotype, ...message } = req.body;
+    const { iduser, idpro, idprotype, idbill, ...message } = req.body;
 
     // Kiểm tra tính hợp lệ của userId và productTypeId
-    if (!iduser || !idpro || !idprotype) {
+    if (!iduser || !idpro || !idprotype || !idbill) {
       return res.status(400).json({
         message: "Thiếu thông tin bắt buộc: userId hoặc productTypeId hoặc .",
       });
@@ -28,6 +29,7 @@ export const WhyCancelOrder = async (req, res) => {
       iduser,
       idpro,
       idprotype,
+      idbill,
     });
     console.log(data);
 
@@ -37,6 +39,7 @@ export const WhyCancelOrder = async (req, res) => {
         message: "Tạo lí do hủy đơn hàng thất bại.",
       });
     }
+    await BillModel.updateOne({ _id: idbill }, { orderstatus: "Đã hủy hàng" });
 
     // Trả về phản hồi thành công
     return res.status(200).json({

@@ -1,5 +1,6 @@
+import AuthModel from "../models/auth";
+import OrderDetailModel from "../models/billDetail";
 import TypeProductModel from "../models/typeProduct";
-import OrderDetailModel from "../models/billdetail";
 
 export const addBillDetail = async (
   req: any,
@@ -17,6 +18,7 @@ export const addBillDetail = async (
     const productType: any = await TypeProductModel.findById(
       BillDetailData.idprotype
     );
+
     const truSoLuongSP = productType?._doc?.quantity - BillDetailData.quantity;
     const updateQuantity = await TypeProductModel.findByIdAndUpdate(
       productType._id.toString(),

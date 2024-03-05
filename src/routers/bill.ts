@@ -30,7 +30,7 @@ router.get("/revenue", dailyRevenueAndCategorySales);
 router.get("/:id", getOneBill);
 router.delete("/:id", removeBill);
 router.get("/user/:id", getBillOfUser);
-router.get("/user/:id", getBillOfUser);
+// router.get("/user/:id", getBillOfUser);
 router.patch("/:id/changePaymentStatus", Change_PaymentStatus);
 router.patch("/:id/changeOrderStatus", Change_OrderStatus);
 
