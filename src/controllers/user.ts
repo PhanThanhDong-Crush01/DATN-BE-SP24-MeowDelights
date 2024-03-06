@@ -38,7 +38,27 @@ export const updateUserProfile = async (req, res) => {
     });
   }
 };
-// export const updateUserProfile = async (req, res) => {
+export const updateUserRole = async (req, res) => {
+  try {
+    const datas = await AuthModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!datas) {
+      return res.status(404).json({
+        mes: "Cập nhật thất bại quyền tài khoản",
+      });
+    }
+    return res.status(200).json({
+      mes: "Cập nhật thành công quyền tài khoản ",
+      data: datas,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      datas: error.mes,
+    });
+  }
+};
+
 //   try {
 //     // Lấy dữ liệu người dùng hiện tại từ cơ sở dữ liệu
 //     const existingData = await AuthModel.findById(req.params.id);
