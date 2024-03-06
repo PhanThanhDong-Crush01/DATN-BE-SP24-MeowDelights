@@ -7,4 +7,6 @@ export interface IAuth {
   imgUser: string;
   gender: boolean;
   age: number;
+  jobPosition: string;
+  employee: string;
 }

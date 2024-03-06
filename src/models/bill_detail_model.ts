@@ -1,3 +1,4 @@
+import { string } from "joi";
 import mongoose from "mongoose";
 
 const OrderDetailSchema = new mongoose.Schema<any>(

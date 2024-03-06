@@ -8,14 +8,18 @@ import {
   signin,
   signup,
 } from "../controllers/auth";
-import { getUserProfile, updateUserProfile } from "../controllers/user";
+import {
+  getUserProfile,
+  updateUserProfile,
+  updateUserRole,
+} from "../controllers/user";
 
 const router: Router = express.Router();
 router.get("/", getAllUser);
 router.post("/signup", signup);
 router.post("/signin", signin);
 router.delete("/:id", removeUser);
-
+router.patch("/roleUser/:id", updateUserRole);
 router.patch("/:id", updateUserProfile);
 router.patch("/:id/setEmployeeCode", setEmployeeCode);
 router.get("/:id", getUserProfile);
