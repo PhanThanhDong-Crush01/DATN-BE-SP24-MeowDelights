@@ -7,7 +7,8 @@ import ChangeBillHistoryModel from "../models/changeBillHistory";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import VoucherModel from "../models/voucher";
-import { addBillDetail } from "./billdetail";
+import { addBillDetail } from "./billDetail";
+
 import { decreaseVoucherQuantity } from "./voucher";
 
 export const createBill = async (req: any, res: any) => {
@@ -282,6 +283,7 @@ export const Change_PaymentStatus = async (req, res) => {
     //req.body: {
     //   paymentstatus: "Đã thanh toán",
     //}
+    // const newPaymentStatus = req.body.paymentstatus;
 
     const data = await BillModel.findByIdAndUpdate(idBill, req.body, {
       new: true,
@@ -318,7 +320,6 @@ export const Change_OrderStatus = async (req, res) => {
       "Đã giao hàng cho đơn vị vận chuyển",
       "Đang giao hàng",
       "Đã giao hàng thành công",
-      "Đã hủy hàng",
     ];
 
     // Cập nhật trạng thái đơn hàng
@@ -346,6 +347,61 @@ export const Change_OrderStatus = async (req, res) => {
     }
     return res.status(200).json({
       message: "Thay đổi trạng thái của đơn hàng thành công!",
+      bill: data,
+      changeOrder,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const CancelOrder = async (req, res) => {
+  try {
+    const idBill = req.params.id;
+    const newOrderStatus = "Đã hủy hàng";
+    const idStaff = req.body.idStaff;
+    // Kiểm tra xem trạng thái mới có phải là trạng thái hợp lệ không
+    const bill = await BillModel.findById(idBill);
+    if (!bill) {
+      return res.status(404).json({
+        message: "Không tìm thấy đơn hàng",
+      });
+    }
+
+    if (
+      bill.orderstatus !== "Chờ xác nhận" &&
+      bill.orderstatus !== "Đang chuẩn bị hàng"
+    ) {
+      return res.status(400).json({
+        message: "Không thể hủy đơn hàng với trạng thái hiện tại",
+      });
+    }
+    // Cập nhật trạng thái đơn hàng
+    const data = await BillModel.findByIdAndUpdate(
+      idBill,
+      { orderstatus: newOrderStatus },
+      { new: true }
+    );
+    if (!data) {
+      return res.status(404).json({
+        message: "Không thể thay đổi trạng thái đơn hàng",
+      });
+    }
+
+    const changeBillHistory = {
+      idBill: idBill,
+      idStaff: idStaff,
+      statusOrder: newOrderStatus,
+    };
+    const changeOrder = await ChangeBillHistoryModel.create(changeBillHistory);
+    if (!data) {
+      return res.status(404).json({
+        message: "Không thể hủy đươn hàng!",
+      });
+    }
+    return res.status(200).json({
+      message: "Hủy đơn hàng thành công!",
       bill: data,
       changeOrder,
     });
