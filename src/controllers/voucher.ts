@@ -16,15 +16,21 @@ export const createVoucher = async (req, res) => {
 
     const idVoucher = data._id;
     const users: any = await AuthModel.find();
-    let totalQuantity = 0; // Tổng số lượng voucher đã tạo
+    let totalQuantity: number = 0; // Tổng số lượng voucher đã tạo
+
+    // Sắp xếp phanPhatVoucher theo thứ tự giảm dần của minTotalBill
+    const phanPhatVoucherSort = phanPhatVoucher.sort((a, b) => {
+      return parseInt(b.minTotalBil) - parseInt(a.minTotalBil);
+    });
 
     // Duyệt qua từng người dùng
     for (const user of users) {
       // Duyệt qua các điều kiện từ phanPhatVoucher để cập nhật quantity
       let quantity = 1;
-      for (const item of phanPhatVoucher) {
-        if (user?.totalAmount >= item.minTotalBill) {
-          quantity = item.quantity;
+
+      for (const item of phanPhatVoucherSort) {
+        if (Number(user?.totalAmount) >= Number(item.minTotalBil)) {
+          quantity = Number(item.quantity);
           break; // Thoát vòng lặp nếu đã tìm được điều kiện phù hợp
         }
       }
@@ -33,11 +39,11 @@ export const createVoucher = async (req, res) => {
       await MyVoucherModel.create({
         idVoucher: idVoucher,
         idUser: user?._id.toString(),
-        quantity: quantity,
+        quantity: Number(quantity),
       });
 
       // Cộng dồn số lượng voucher đã tạo
-      totalQuantity += quantity;
+      totalQuantity += Number(quantity);
     }
 
     return res.status(200).json({
