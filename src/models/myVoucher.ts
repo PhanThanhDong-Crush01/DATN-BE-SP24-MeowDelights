@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const myVoucherSchema = new mongoose.Schema<any>(
   {
     idVoucher: { type: String, required: true },
-    idUser: { type: String, required: true },
+    idUser: { type: String },
     quantity: { type: Number, required: true },
   },
   { timestamps: true, versionKey: false }
