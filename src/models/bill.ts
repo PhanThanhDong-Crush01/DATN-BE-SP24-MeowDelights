@@ -46,7 +46,7 @@ const BillSchema = new mongoose.Schema<any>(
 );
 const BillModel = mongoose.model<any>("Bill", BillSchema);
 export default BillModel;
-
+//gộp
 const OrderDetailSchema = new mongoose.Schema<any>(
   {
     idbill: {
