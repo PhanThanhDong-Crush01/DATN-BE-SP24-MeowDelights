@@ -15,34 +15,35 @@ export const createVoucher = async (req, res) => {
     }
 
     const idVoucher = data._id;
-    const user: any = await AuthModel.find();
-    const userMoney = await Promise.all(
-      user.map(async (item) => {
-        phanPhatVoucher.map(async (item) => {
-          if (item.totalAmount > item.minTotalBill) {
-            await MyVoucherModel.create({
-              idVoucher: idVoucher,
-              idUser: item?._doc?._id.toString(),
-              quantity: item.quantity,
-            });
-          } else if (item.totalAmount == 0) {
-            await MyVoucherModel.create({
-              idVoucher: idVoucher,
-              idUser: item?._doc?._id.toString(),
-              quantity: 1,
-            });
-          }
-        });
+    const users: any = await AuthModel.find();
+    let totalQuantity = 0; // Tổng số lượng voucher đã tạo
 
-        return {
-          userId: item?._doc?._id.toString(),
-          totalBill: item.totalAmount,
-        };
-      })
-    );
+    // Duyệt qua từng người dùng
+    for (const user of users) {
+      // Duyệt qua các điều kiện từ phanPhatVoucher để cập nhật quantity
+      let quantity = 1;
+      for (const item of phanPhatVoucher) {
+        if (user?.totalAmount >= item.minTotalBill) {
+          quantity = item.quantity;
+          break; // Thoát vòng lặp nếu đã tìm được điều kiện phù hợp
+        }
+      }
+
+      // Tạo voucher cho user với số lượng đã tính toán
+      await MyVoucherModel.create({
+        idVoucher: idVoucher,
+        idUser: user?._id.toString(),
+        quantity: quantity,
+      });
+
+      // Cộng dồn số lượng voucher đã tạo
+      totalQuantity += quantity;
+    }
 
     return res.status(200).json({
       message: "Tạo khuyến mãi thành công ",
+      totalQuantity: totalQuantity, // Trả về tổng số lượng voucher đã tạo
+
       datas: data,
     });
   } catch (error) {
@@ -77,6 +78,7 @@ export const getAllVoucher = async (req, res) => {
 
     return res.status(200).json({
       message: "lấy danh sách khuyến mại thành công",
+
       datas: voucher,
     });
   } catch (error) {
