@@ -1,5 +1,6 @@
 import AuthModel from "../models/auth";
-import OrderDetailModel from "../models/billDetail";
+import OrderDetailModel from "../models/bill_detail_model";
+
 import TypeProductModel from "../models/typeProduct";
 
 export const addBillDetail = async (
