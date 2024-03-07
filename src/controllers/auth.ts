@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import BillModel from "../models/bill";
-import OrderDetailModel from "../models/billDetail";
+import OrderDetailModel from "../models/bill_detail_model";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
