@@ -1,4 +1,4 @@
-import OrderDetailModel from "../models/bill_detail_model";
+import { OrderDetailModel } from "../models/bill";
 import CategoryModel from "../models/category";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";

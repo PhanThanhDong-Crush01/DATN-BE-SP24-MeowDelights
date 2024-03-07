@@ -4,12 +4,10 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
-import BillModel from "../models/bill";
-import OrderDetailModel from "../models/bill_detail_model";
 import VoucherModel from "../models/voucher";
 import MyVoucherModel from "../models/myVoucher";
 import AuthModel from "../models/auth";
-
+import { OrderDetailModel } from "../models/bill";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {

@@ -1,6 +1,5 @@
 import AuthModel from "../../models/auth";
 import BillModel from "../../models/bill";
-import OrderDetailModel from "../../models/bill_detail_model";
 import CategoryModel from "../../models/category";
 import MyVoucherModel from "../../models/myVoucher";
 import ProductModel from "../../models/product";

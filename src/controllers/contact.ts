@@ -18,25 +18,24 @@ export const getAllContact = async (req, res) => {
 
     const dataContact = await Promise.all(
       data.map(async (item: any) => {
-        if (item.idNV != undefined) {
+        if (item?._doc.idNV != undefined) {
           const nhanVien: any = await auth.findById(item.idNV);
-          if (item.idOrder != undefined) {
+          if (item?._doc.idOrder != undefined) {
             const order = await BillModel.findById(item.idOrder);
             return {
-              ...item._doc,
-              nhanVien: nhanVien._doc,
+              ...item?._doc,
+              nhanVien: nhanVien,
               order: order,
             };
           }
           return {
-            ...item._doc,
-            nhanVien: nhanVien._doc,
+            ...item?._doc,
+            nhanVien: nhanVien,
           };
         }
-        return item;
+        return item?._doc;
       })
     );
-    console.log("🚀 ~ getAllContact ~ dataContact:", dataContact);
 
     return res.status(200).json({
       message: "Gọi danh sách liên hệ thành công!",
