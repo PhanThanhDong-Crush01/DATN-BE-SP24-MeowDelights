@@ -5,6 +5,7 @@
 // export default router;
 import { Router } from "express";
 import {
+  CancelOrder,
   Change_OrderStatus,
   Change_PaymentStatus,
   createBill,
@@ -31,7 +32,8 @@ router.get("/:id", getOneBill);
 router.delete("/:id", removeBill);
 router.get("/user/:id", getBillOfUser);
 // router.get("/user/:id", getBillOfUser);
-router.patch("/:id/changePaymentStatus", Change_PaymentStatus);
-router.patch("/:id/changeOrderStatus", Change_OrderStatus);
+router.patch("/cancelOrder/:id", CancelOrder);
+router.patch("/changePaymentStatus/:id", Change_PaymentStatus);
+router.patch("/changeOrderStatus/:id", Change_OrderStatus);
 
 export default router;

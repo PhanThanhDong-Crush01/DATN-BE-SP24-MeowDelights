@@ -90,6 +90,9 @@ const authSchema = new mongoose.Schema(
     discount_points: {
       type: Number,
     },
+    totalAmount: {
+      type: Number,
+    },
     jobPosition: {
       type: String,
       default: "",

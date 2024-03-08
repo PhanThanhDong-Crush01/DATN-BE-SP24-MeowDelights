@@ -4,8 +4,10 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
-import BillModel from "../models/bill";
-import OrderDetailModel from "../models/billDetail";
+import VoucherModel from "../models/voucher";
+import MyVoucherModel from "../models/myVoucher";
+import AuthModel from "../models/auth";
+import { OrderDetailModel } from "../models/bill";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
@@ -22,16 +24,18 @@ export const getAllUser = async (req, res) => {
         const userBills = await OrderDetailModel.find({
           iduser: user._id,
         });
-        console.log(userBills);
         // Tính tổng số hóa đơn
         const totalBillCount = userBills.length;
-        console.log(totalBillCount);
         // Tính tổng tiền đã mua
         const totalAmount = userBills.reduce(
           (acc, datas) => acc + datas.money,
           0
         );
-        console.log(totalAmount);
+        await AuthModel.findByIdAndUpdate(
+          user._id,
+          { totalAmount: totalAmount },
+          { new: true }
+        );
 
         // Trả về thông tin người dùng kèm theo số hóa đơn và tổng tiền đã mua
         return {
@@ -131,6 +135,16 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60,
     });
+    const ListVoucher = await VoucherModel.find();
+    console.log("🚀 ~ signup ~ ListVoucher:", ListVoucher);
+    ListVoucher.map(async (voucher) => {
+      await MyVoucherModel.create({
+        idVoucher: voucher._id,
+        idUser: user._id,
+        quantity: 1,
+      });
+    });
+
     return res.status(201).json({
       message: "Đăng ký thành công",
       accessToken: token,

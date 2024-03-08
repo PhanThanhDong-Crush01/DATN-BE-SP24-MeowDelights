@@ -21,6 +21,26 @@ export const createMyVoucher = async (req, res) => {
 };
 export const getAllMyVoucher = async (req, res) => {
   try {
+    const idVc = req.params.id;
+    const data = await MyVoucherModel.find({ idVoucher: idVc });
+    if (!data) {
+      return res.status(404).json({
+        message: "lấy danh sách khuyến mại thất bại",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Lấy danh sách khuyến mại thành công",
+      datas: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const getAllMyVoucherUser = async (req, res) => {
+  try {
     const idUser = req.params.id;
     const data = await MyVoucherModel.find({ idUser: idUser });
     if (!data) {
