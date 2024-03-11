@@ -6,6 +6,7 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import BillModel from "../models/bill";
 import OrderDetailModel from "../models/bill_detail_model";
+import AuthModel from "../models/auth";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
@@ -237,6 +238,116 @@ export const setEmployeeCode = async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       message: error.massage,
+    });
+  }
+};
+
+export const createAuth = async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+
+    // Kiểm tra xác nhận mật khẩu
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        message: "Mật khẩu và xác nhận mật khẩu không khớp",
+      });
+    }
+
+    // Kiểm tra email đã tồn tại trong hệ thống hay chưa
+    const userExist = await AuthModel.findOne({ email });
+    if (userExist) {
+      return res.status(400).json({
+        message: "Email đã tồn tại",
+      });
+    }
+
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Tạo mới người dùng
+    const newUser = await AuthModel.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    newUser.password = undefined;
+
+    // Tạo token
+    const token = jwt.sign({ _id: newUser._id }, process.env.SECRET_KEY, {
+      expiresIn: 60 * 60, // Token hết hạn sau 1 giờ
+    });
+
+    return res.status(200).json({
+      message: "Tạo tài khoản thành công",
+      user: newUser,
+      token: token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi khi tạo tài khoản: " + error.message,
+    });
+  }
+};
+
+export const editAuth = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      age,
+      phone,
+      role,
+      address,
+      employee,
+      jobPosition,
+      imgUser,
+      gender,
+    } = req.body;
+    const userId = req.params.id;
+
+    // Kiểm tra xem người dùng có tồn tại không
+    const user = await AuthModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    // Cập nhật thông tin người dùng
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      // Mã hóa mật khẩu mới nếu có
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+    if (age) user.age = age;
+    if (address) user.address = address;
+    if (jobPosition) user.jobPosition = jobPosition;
+    if (imgUser) user.imgUser = imgUser;
+    if (gender) user.gender = gender;
+    if (role) user.role = role;
+    if (phone) user.phone = phone;
+    if (employee) user.employee = employee;
+
+    // Lưu thông tin người dùng đã chỉnh sửa
+    await user.save();
+
+    // Tạo token mới
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: 60 * 60, // Token hết hạn sau 1 giờ
+    });
+
+    // Trả về thông điệp thành công và token mới
+    return res.status(200).json({
+      message: "Chỉnh sửa thông tin người dùng thành công",
+      user: user,
+      token: token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi khi chỉnh sửa thông tin người dùng: " + error.message,
     });
   }
 };

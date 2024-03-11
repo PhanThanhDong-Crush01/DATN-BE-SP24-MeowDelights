@@ -1,6 +1,6 @@
-import Category from "../models/category.js";
-import { categoryValid } from "../validation/category.js";
-import { ICategory } from "../interface/ICategory.js";
+import Category from "../models/category";
+import { categoryValid } from "../validation/category";
+import { ICategory } from "../interface/ICategory";
 
 export const getAll = async (req, res) => {
   try {
