@@ -52,7 +52,7 @@ export const getAllUser = async (req, res) => {
         };
       })
     );
-
+    const reversedUsersWithStats = usersWithStats.reverse();
     return res.json({
       message: "Hiển thị thành công",
       users: usersWithStats,

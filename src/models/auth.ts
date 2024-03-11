@@ -69,23 +69,18 @@ const authSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      default: "",
     },
     gender: {
       type: Boolean,
-      default: true,
     },
     age: {
       type: Number,
-      default: 0,
     },
     address: {
       type: String,
-      default: "",
     },
     imgUser: {
       type: String,
-      default: "",
     },
     discount_points: {
       type: Number,
@@ -95,11 +90,9 @@ const authSchema = new mongoose.Schema(
     },
     jobPosition: {
       type: String,
-      default: "",
     },
     employee: {
       type: String,
-      default: "",
     },
   },
   { timestamps: true, versionKey: false }
