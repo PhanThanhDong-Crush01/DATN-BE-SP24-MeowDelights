@@ -1,6 +1,8 @@
 import express, { Router } from "express";
 import {
   AuthWithRole,
+  createAuth,
+  editAuth,
   getAllUser,
   getOne,
   removeUser,
@@ -17,6 +19,8 @@ import {
 const router: Router = express.Router();
 router.get("/", getAllUser);
 router.post("/signup", signup);
+router.post("/createAuth", createAuth);
+router.patch("/editAuth/:id", editAuth);
 router.post("/signin", signin);
 router.delete("/:id", removeUser);
 router.patch("/roleUser/:id", updateUserRole);

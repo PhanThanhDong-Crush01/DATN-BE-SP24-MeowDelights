@@ -118,7 +118,11 @@ export const getDetailVoucher = async (req, res) => {
 };
 export const removeVoucher = async (req, res) => {
   try {
-    const data = await Voucher.findByIdAndDelete(req.params.id);
+    const data = await Voucher.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
     if (!data) {
       return res.status(404).json({
         message: "Xóa khuyến mại thất bại",

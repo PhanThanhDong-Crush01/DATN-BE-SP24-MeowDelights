@@ -94,7 +94,11 @@ export const getAllComment = async (req, res) => {
 // };
 export const removeComment = async (req, res) => {
   try {
-    const data = await Comment.findByIdAndDelete(req.params.id);
+    const data = await Comment.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
     if (!data) {
       return res.status(404).json({
         message: "Xóa đánh giá thất bại",
