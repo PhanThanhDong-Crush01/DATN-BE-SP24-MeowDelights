@@ -94,6 +94,9 @@ const authSchema = new mongoose.Schema(
     employee: {
       type: String,
     },
+    ExistsInStock: {
+      type: Boolean,
+    },
   },
   { timestamps: true, versionKey: false }
 );

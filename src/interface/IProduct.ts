@@ -11,4 +11,5 @@ export interface IProduct extends Document {
   status: boolean;
   description: string;
   idCategory: string;
+  ExistsInStock: Boolean;
 }

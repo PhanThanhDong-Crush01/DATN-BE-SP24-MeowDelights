@@ -136,7 +136,11 @@ export const remoteContact = async (req, res) => {
   try {
     const id = req.params.id;
     // const { status } = await axios.delete(`${API_URL}/ContactModel/${id}`);
-    const data = await ContactModel.findByIdAndDelete(id);
+    const data = await ContactModel.findByIdAndUpdate(
+      id,
+      { ExistsInStock: false },
+      { new: true }
+    );
 
     console.log(data);
     if (!data) {

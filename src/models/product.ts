@@ -15,6 +15,9 @@ const productSchema = new mongoose.Schema<IProduct>(
     status: { type: Boolean },
     description: { type: String, required: true },
     idCategory: { type: String, required: true },
+    ExistsInStock: {
+      type: Boolean,
+    },
   },
   { timestamps: true, versionKey: false }
 );
