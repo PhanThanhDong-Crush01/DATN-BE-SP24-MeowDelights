@@ -331,7 +331,11 @@ export const restore = async (req, res: any) => {
 export const deletePro = async (req, res: any) => {
   try {
     const id = req.params.id;
-    const data = await ProductModel.findByIdAndDelete(id);
+    const data = await ProductModel.findByIdAndUpdate(
+      id,
+      { ExistsInStock: false },
+      { new: true }
+    );
 
     console.log(data);
     if (!data) {

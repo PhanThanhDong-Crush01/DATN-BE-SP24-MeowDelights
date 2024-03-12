@@ -113,7 +113,11 @@ export const remoteTypeVoucher = async (req, res) => {
   try {
     const id = req.params.id;
     // const { status } = await axios.delete(`${API_URL}/typeVoucher/${id}`);
-    const data = await typeVoucher.findByIdAndDelete(id);
+    const data = await typeVoucher.findByIdAndUpdate(
+      id,
+      { ExistsInStock: false },
+      { new: true }
+    );
 
     console.log(data);
     if (!data) {

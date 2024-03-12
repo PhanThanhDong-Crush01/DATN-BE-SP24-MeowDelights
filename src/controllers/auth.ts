@@ -4,9 +4,8 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
-import BillModel from "../models/bill";
-import OrderDetailModel from "../models/bill_detail_model";
 import AuthModel from "../models/auth";
+import { OrderDetailModel } from "../models/bill";
 
 dotenv.config();
 export const getAllUser = async (req, res) => {
@@ -46,6 +45,7 @@ export const getAllUser = async (req, res) => {
           imgUser: user.imgUser,
           phone: user.phone,
           employee: user.employee,
+          jobPosition: user.jobPosition,
           discount_points: user.discount_points,
           totalBillCount: totalBillCount,
           totalAmount: totalAmount,
@@ -84,7 +84,11 @@ export const getOne = async (req, res) => {
 
 export const removeUser = async (req, res) => {
   try {
-    const user = await auth.findByIdAndDelete(req.params.id);
+    const user = await auth.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
     if (!user) {
       return res.status(404).json({
         massage: "Xóa tài khoản thất bại",
