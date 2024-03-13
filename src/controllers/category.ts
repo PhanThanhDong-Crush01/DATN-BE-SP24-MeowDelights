@@ -97,7 +97,11 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    const data = await Category.findByIdAndDelete(req.params.id);
+    const data = await Category.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
     if (!data) {
       return res.status(404).json({
         message: "Không thể xóa danh mục",

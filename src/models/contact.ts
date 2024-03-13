@@ -10,6 +10,9 @@ const ContactSchema = new mongoose.Schema<any>(
     statusOrder: { type: Boolean },
     idOrder: { type: String },
     note: { type: String },
+    ExistsInStock: {
+      type: Boolean,
+    },
   },
   { timestamps: true, versionKey: false }
 );

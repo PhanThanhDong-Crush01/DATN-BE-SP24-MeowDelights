@@ -30,6 +30,9 @@ const voucherSchema = new mongoose.Schema<any>(
       type: String,
       required: true,
     },
+    ExistsInStock: {
+      type: Boolean,
+    },
   },
   { timestamps: true, versionKey: false }
 );
