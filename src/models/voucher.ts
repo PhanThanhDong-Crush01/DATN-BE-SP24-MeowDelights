@@ -18,6 +18,10 @@ const voucherSchema = new mongoose.Schema<any>(
       type: Number,
       required: true,
     },
+    startDate: {
+      type: String,
+      required: true,
+    },
     expiry: {
       type: String,
       required: true,
