@@ -12,7 +12,7 @@ export const deleteAllData = async (req: any, res: any) => {
     // await ProductModel.deleteMany();
     // await TypeProductModel.deleteMany();
     // await CategoryModel.deleteMany();
-    // await VoucherModel.deleteMany();
+    await VoucherModel.deleteMany();
     // await TypeVoucherModel.deleteMany();
     // await AuthModel.deleteMany();
     // await BillModel.deleteMany();
