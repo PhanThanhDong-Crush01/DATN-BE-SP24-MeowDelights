@@ -140,7 +140,6 @@ export const getOne = async (req: any, res: any) => {
     const id = req.params.id;
 
     const userCartItem: any = await OrderDetailModel.findById(id);
-    console.log("🚀 ~ getOne ~ userCartItem:", userCartItem._doc);
     if (!userCartItem) {
       return res.status(200).json({
         message: "In ra giỏ hàng của bạn thất bại",
@@ -178,6 +177,26 @@ export const remove = async (req: any, res: any) => {
     console.error(`Error in create cart item: ${error.message}`);
     return res.status(500).json({
       message: "Internal Server Error",
+    });
+  }
+};
+
+export const removeCartUser = async (req: any, res: any) => {
+  try {
+    const cartUser = await OrderDetailModel.find({
+      iduser: req.params.id.toString(),
+    });
+    cartUser.map(async (item: any) => {
+      await OrderDetailModel.findByIdAndDelete(item?._id);
+    });
+
+    return res.status(201).json({
+      message: "Xoá sản phẩm trong giỏ hàng của bạn thành công",
+    });
+  } catch (error) {
+    console.error(`Error in create cart item: ${error.message}`);
+    return res.status(500).json({
+      message: `Internal Server Error: ${error.message}`,
     });
   }
 };
