@@ -50,9 +50,12 @@ export const create = async (req: any, res: any) => {
 export const get = async function (req, res) {
   try {
     const productId = req.params.id;
+    const products = req.body;
 
     // Lấy thông tin sản phẩm
-    const product: any = await ProductModel.findById(productId);
+    const product: any = await ProductModel.findById(productId, products, {
+      ExistsInStock: true,
+    });
     if (!product) {
       return res.json({
         message: "Không có sản phẩm nào",

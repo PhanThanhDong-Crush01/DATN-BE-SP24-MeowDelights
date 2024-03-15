@@ -38,6 +38,10 @@ const BillSchema = new mongoose.Schema<any>(
       type: String,
       required: true,
     },
+    ExistsInStock: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

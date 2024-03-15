@@ -4,4 +4,5 @@ export interface IWhyCancelOrder {
   idprotype: string;
   iduser: string;
   message: string;
+  ExistsInStock: boolean;
 }

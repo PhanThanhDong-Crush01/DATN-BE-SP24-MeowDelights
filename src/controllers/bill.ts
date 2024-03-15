@@ -8,7 +8,7 @@ import VoucherModel from "../models/voucher";
 import { addBillDetail } from "./billDetail";
 
 import { decreaseVoucherQuantity } from "./voucher";
-
+// xong bill
 export const createBill = async (req: any, res: any) => {
   try {
     const bill = await BillModel.create(req.body.bill);
@@ -66,7 +66,7 @@ export const createBill = async (req: any, res: any) => {
 export const getAllBill = async (req, res) => {
   try {
     // const { data } = await axios.get(`${API_URL}/typeVoucher`);
-    const data = await BillModel.find();
+    const data = await BillModel.find({ ExistsInStock: true });
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -116,6 +116,7 @@ export const getAllBill = async (req, res) => {
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
           voucher: voucher,
+          ExistsInStock: true,
           user: {
             name: user?._doc?.name,
             email: user?._doc?.email,
@@ -138,7 +139,7 @@ export const getOneBill = async (req, res) => {
   try {
     const idBill = req.params.id;
 
-    const data = await BillModel.findById(idBill);
+    const data = await BillModel.findById(idBill, { ExistsInStock: true });
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -568,7 +569,11 @@ export const dailyRevenueAndCategorySales = async (req, res) => {
 };
 export const removeBill = async (req, res) => {
   try {
-    const data = await BillModel.findByIdAndDelete(req.params.id);
+    const data = await BillModel.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
     if (!data) {
       return res.status(404).json({
         message: "Xóa khuyến mại thất bại",

@@ -18,6 +18,8 @@ import {
 import {
   WhyCancelOrder,
   getAllWhyCancelOrder,
+  removeWhyOrder,
+  updateWhyOrder,
 } from "../controllers/WhyCancelOrder";
 
 // import { checkPermission } from "../middlewares/checkPermission";
@@ -25,6 +27,8 @@ const router = Router();
 router.post("/", createBill);
 router.post("/whyCanCelOrder", WhyCancelOrder);
 router.get("/whyCanCelOrder", getAllWhyCancelOrder);
+router.delete("/whyCanCelOrder/:id", removeWhyOrder);
+router.patch("/whyCanCelOrder/:id", updateWhyOrder);
 router.get("/", getAllBill);
 router.get("/revenue", dailyRevenueAndCategorySales);
 // router.get("/revenue", revenue);

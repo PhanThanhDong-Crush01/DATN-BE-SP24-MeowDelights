@@ -1,7 +1,8 @@
 import WhyCancelOrderModel from "../models/WhyCancelOrder";
 import BillModel from "../models/bill";
 import whyCancelOrderSchema from "../validation/whycancenorder";
-
+// xong whyorder
+// tạo lí do
 export const WhyCancelOrder = async (req, res) => {
   try {
     const { error } = whyCancelOrderSchema.validate(req.body.datas);
@@ -26,6 +27,7 @@ export const WhyCancelOrder = async (req, res) => {
     // Tạo mới đối tượng comment
     const data = await WhyCancelOrderModel.create({
       ...message,
+      ExistsInStock: true,
       iduser,
       idpro,
       idprotype,
@@ -53,9 +55,10 @@ export const WhyCancelOrder = async (req, res) => {
     });
   }
 };
+// /lấy toàn bộ lí do
 export const getAllWhyCancelOrder = async (req, res) => {
   try {
-    const data = await WhyCancelOrderModel.find({});
+    const data = await WhyCancelOrderModel.find({ ExistsInStock: true });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách lí do thất bại",
@@ -63,6 +66,52 @@ export const getAllWhyCancelOrder = async (req, res) => {
     }
     return res.status(200).json({
       message: "lấy danh sách lí do thành công",
+      datas: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const removeWhyOrder = async (req, res) => {
+  try {
+    const data = await WhyCancelOrderModel.findByIdAndUpdate(
+      req.params.id,
+      { ExistsInStock: false },
+      { new: true }
+    );
+    if (!data) {
+      return res.status(404).json({
+        message: "Xóa lí do thất bại",
+      });
+    }
+    return res.status(200).json({
+      message: "Xóa lí do thành công",
+      datas: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const updateWhyOrder = async (req, res) => {
+  try {
+    const data = await WhyCancelOrderModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    if (!data) {
+      return res.status(404).json({
+        message: "Cập nhật khuyến mại thất bại",
+      });
+    }
+    return res.status(200).json({
+      message: "Cập nhật khuyến mại thành công",
       datas: data,
     });
   } catch (error) {

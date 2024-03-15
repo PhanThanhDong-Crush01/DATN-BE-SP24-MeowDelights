@@ -6,11 +6,12 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import AuthModel from "../models/auth";
 import { OrderDetailModel } from "../models/bill";
-
+import mongoose from "mongoose";
+// // xong auth
 dotenv.config();
 export const getAllUser = async (req, res) => {
   try {
-    const users = await auth.find();
+    const users = await auth.find({ ExistsInStock: true });
     if (users.length === 0) {
       return res.status(404).json({
         massage: "không có tài khoản nào",
@@ -62,7 +63,7 @@ export const getAllUser = async (req, res) => {
 };
 export const getOne = async (req, res) => {
   try {
-    const user = await auth.findById(req.params.id);
+    const user = await auth.findById(req.params.id, { ExistsInStock: true });
     if (!user) {
       return res.status(404).json({
         massage: "không có tài khoản nào",
@@ -304,6 +305,7 @@ export const editAuth = async (req, res) => {
       jobPosition,
       imgUser,
       gender,
+      ExistsInStock,
     } = req.body;
     const userId = req.params.id;
 
@@ -331,6 +333,7 @@ export const editAuth = async (req, res) => {
     if (role) user.role = role;
     if (phone) user.phone = phone;
     if (employee) user.employee = employee;
+    if (ExistsInStock) user.ExistsInStock = ExistsInStock;
 
     // Lưu thông tin người dùng đã chỉnh sửa
     await user.save();
@@ -349,6 +352,37 @@ export const editAuth = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: "Lỗi khi chỉnh sửa thông tin người dùng: " + error.message,
+    });
+  }
+};
+export const deleteEmployee = async (req, res) => {
+  try {
+    const userId = req.body; // Lấy trực tiếp ID của người dùng từ req.body
+    console.log(userId);
+    // Kiểm tra xem userId có tồn tại không
+    const user = await AuthModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: `Không tìm thấy người dùng có ID ${userId}`,
+      });
+    }
+
+    // Xóa mã nhân viên
+    await AuthModel.findByIdAndUpdate(userId, { $unset: { employee: 1 } });
+
+    // Xóa vị trí công việc
+    await AuthModel.findByIdAndUpdate(userId, { $unset: { jobPosition: 1 } });
+
+    // Chuyển vai trò thành member
+    await AuthModel.findByIdAndUpdate(userId, { role: "member" });
+
+    return res.status(200).json({
+      message:
+        "Đã xóa mã nhân viên, vị trí công việc và chuyển vai trò thành member thành công",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi khi xóa nhân viên: " + error.message,
     });
   }
 };

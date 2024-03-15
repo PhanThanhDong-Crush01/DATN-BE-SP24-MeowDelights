@@ -4,7 +4,7 @@ const voucherSchema = new mongoose.Schema<any>(
   {
     name: {
       type: String,
-      required: true,
+      // required: true,
     },
     status: {
       type: Boolean,
@@ -12,11 +12,11 @@ const voucherSchema = new mongoose.Schema<any>(
     },
     quantity: {
       type: Number,
-      required: true,
+      // required: true,
     },
     decrease: {
       type: Number,
-      required: true,
+      // required: true,
     },
     startDate: {
       type: String,
@@ -24,18 +24,19 @@ const voucherSchema = new mongoose.Schema<any>(
     },
     expiry: {
       type: String,
-      required: true,
+      // required: true,
     },
     conditions: {
       type: Number,
-      required: true,
+      // required: true,
     },
     idTypeVoucher: {
       type: String,
-      required: true,
+      // required: true,
     },
     ExistsInStock: {
       type: Boolean,
+      default: true,
     },
   },
   { timestamps: true, versionKey: false }

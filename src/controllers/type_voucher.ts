@@ -2,11 +2,13 @@ import dotenv from "dotenv";
 import typeVoucher from "../models/typeVoucher";
 import typeVoucherSchema from "../validation/typeVoucher";
 dotenv.config();
-
+// xong typeVoucher
 export const getAllTypeVoucher = async (req, res) => {
   try {
     // const { data } = await axios.get(`${API_URL}/typeVoucher`);
-    const data = await typeVoucher.find();
+    const data = await typeVoucher.find({
+      ExistsInStock: true,
+    });
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -28,7 +30,9 @@ export const getOneTypeVoucher = async (req, res) => {
   try {
     const id = req.params.id;
     // const { data } = await axios.get(`${API_URL}/typeVoucher/${id}`);
-    const data = await typeVoucher.findById(id);
+    const data = await typeVoucher.findById(id, {
+      ExistsInStock: true,
+    });
 
     if (!data) {
       return res.status(404).json({

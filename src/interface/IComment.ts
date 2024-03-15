@@ -7,4 +7,5 @@ export interface IComment {
   star: number;
   title: string;
   comment: string;
+  ExistsInStock: boolean;
 }

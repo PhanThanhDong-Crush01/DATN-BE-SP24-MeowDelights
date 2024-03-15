@@ -96,6 +96,7 @@ const authSchema = new mongoose.Schema(
     },
     ExistsInStock: {
       type: Boolean,
+      default: true,
     },
   },
   { timestamps: true, versionKey: false }

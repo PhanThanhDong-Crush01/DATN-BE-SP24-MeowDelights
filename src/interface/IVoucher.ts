@@ -7,4 +7,5 @@ export interface IVoucher {
   expiry: string; //hạn sử dụng
   conditions: string; /// điều kiện
   idTypeVoucher: string;
+  ExistsInStock: boolean;
 }

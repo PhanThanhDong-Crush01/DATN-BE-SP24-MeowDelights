@@ -1,10 +1,12 @@
 import Category from "../models/category";
 import { categoryValid } from "../validation/category";
 import { ICategory } from "../interface/ICategory";
-
+//  ko được
 export const getAll = async (req, res) => {
   try {
-    const data = await Category.find({});
+    const data = await Category.find({
+      ExistsInStock: true,
+    });
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không có danh mục để hiển thị",
@@ -24,7 +26,9 @@ export const getAll = async (req, res) => {
 
 export const getDetail = async (req, res) => {
   try {
-    const data = await Category.findById(req.params.id);
+    const data = await Category.findById(req.params.id, {
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Danh mục không tồn tại",
@@ -73,7 +77,10 @@ export const update = async (req, res) => {
   try {
     const data = await Category.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
+      {
+        name: req.body.name,
+        ExistsInStock: req.body.ExistsInStock,
+      },
       {
         new: true,
       }
