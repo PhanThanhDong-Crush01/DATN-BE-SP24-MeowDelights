@@ -8,6 +8,7 @@ const categorySchema = new mongoose.Schema(
     },
     ExistsInStock: {
       type: Boolean,
+      default: true,
     },
   },
   {

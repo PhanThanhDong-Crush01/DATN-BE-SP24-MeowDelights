@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import {
   AuthWithRole,
   createAuth,
+  deleteEmployee,
   editAuth,
   getAllUser,
   getOne,
@@ -25,6 +26,7 @@ router.post("/signin", signin);
 router.delete("/:id", removeUser);
 router.patch("/roleUser/:id", updateUserRole);
 router.patch("/:id", updateUserProfile);
+router.patch("/deleteEmployee/:id", deleteEmployee);
 router.patch("/:id/setEmployeeCode", setEmployeeCode);
 router.get("/:id", getUserProfile);
 // router.get("/:id", getOne);

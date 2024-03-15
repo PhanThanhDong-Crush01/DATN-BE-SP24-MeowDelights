@@ -8,4 +8,5 @@ export interface IContact {
   statusOrder: boolean;
   idOrder: string;
   note: string;
+  ExistsInStock: boolean;
 }

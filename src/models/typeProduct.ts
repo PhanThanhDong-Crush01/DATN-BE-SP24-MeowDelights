@@ -10,6 +10,10 @@ const typeProductSchema = new mongoose.Schema<any>(
     weight: { type: String, required: true },
     price: { type: Number, required: true },
     idPro: { type: Object, required: true },
+    ExistsInStock: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );

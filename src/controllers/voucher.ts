@@ -62,7 +62,9 @@ export const createVoucher = async (req, res) => {
 
 export const getAllVoucher = async (req, res) => {
   try {
-    const data = await Voucher.find();
+    const data = await Voucher.find({
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",
@@ -118,7 +120,7 @@ export const getAllVoucher = async (req, res) => {
 };
 export const getDetailVoucher = async (req, res) => {
   try {
-    const data = await Voucher.findById(req.params.id);
+    const data = await Voucher.findById(req.params.id, { ExistsInStock: true });
     // console.log(data);
     if (!data) {
       return res.status(404).json({
