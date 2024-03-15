@@ -51,7 +51,6 @@ const OrderDetailSchema = new mongoose.Schema<any>(
   {
     idbill: {
       type: String,
-      required: true,
     },
     iduser: {
       type: String,

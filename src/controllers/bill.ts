@@ -278,14 +278,15 @@ export const getBillOfUser = async (req, res) => {
 export const Change_PaymentStatus = async (req, res) => {
   try {
     const idBill = req.params.id;
-    //req.body: {
-    //   paymentstatus: "Đã thanh toán",
-    //}
-    // const newPaymentStatus = req.body.paymentstatus;
+    const newPaymentStatus = req.body.paymentstatus;
 
-    const data = await BillModel.findByIdAndUpdate(idBill, req.body, {
-      new: true,
-    });
+    const data = await BillModel.findByIdAndUpdate(
+      idBill,
+      { paymentstatus: newPaymentStatus },
+      {
+        new: true,
+      }
+    );
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không thể thay đổi trạng thái thanh toán hóa đơn",

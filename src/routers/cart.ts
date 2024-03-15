@@ -4,6 +4,7 @@ import {
   getAllCartOfUser,
   getOne,
   remove,
+  removeCartUser,
   update,
 } from "../controllers/cart";
 
@@ -14,5 +15,6 @@ router.get("/:id", getOne);
 router.post("/", create);
 router.patch("/", update);
 router.delete("/:id", remove);
+router.delete("/user/:id", removeCartUser);
 
 export default router;

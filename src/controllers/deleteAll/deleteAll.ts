@@ -12,12 +12,12 @@ export const deleteAllData = async (req: any, res: any) => {
     // await ProductModel.deleteMany();
     // await TypeProductModel.deleteMany();
     // await CategoryModel.deleteMany();
-    await VoucherModel.deleteMany();
+    //await VoucherModel.deleteMany();
     // await TypeVoucherModel.deleteMany();
     // await AuthModel.deleteMany();
-    // await BillModel.deleteMany();
+    await BillModel.deleteMany({ paymentmethods: "Thanh toán MoMo" });
     // await OrderDetailModel.deleteMany();
-    await MyVoucherModel.deleteMany();
+    //await MyVoucherModel.deleteMany();
 
     return res.status(200).json({
       message: "Xoá tất cả dữ liệu thành công thành công!",

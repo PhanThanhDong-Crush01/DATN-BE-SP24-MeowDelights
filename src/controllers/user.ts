@@ -1,4 +1,5 @@
 import AuthModel from "../models/auth";
+import { setEmployeeCode } from "./auth";
 export const getUserProfile = async (req, res) => {
   try {
     const datas = await AuthModel.findById(req.params.id);
@@ -48,6 +49,7 @@ export const updateUserRole = async (req, res) => {
         mes: "Cập nhật thất bại quyền tài khoản",
       });
     }
+
     return res.status(200).json({
       mes: "Cập nhật thành công quyền tài khoản ",
       data: datas,
