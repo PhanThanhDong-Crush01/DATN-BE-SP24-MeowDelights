@@ -62,7 +62,7 @@ export const createVoucher = async (req, res) => {
 
 export const getAllVoucher = async (req, res) => {
   try {
-    const data = await Voucher.find({});
+    const data = await Voucher.find();
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",

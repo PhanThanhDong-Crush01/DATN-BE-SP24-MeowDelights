@@ -1,5 +1,5 @@
 import AuthModel from "../models/auth";
-import OrderDetailModel from "../models/bill_detail_model";
+import { OrderDetailModel } from "../models/bill";
 
 import TypeProductModel from "../models/typeProduct";
 
@@ -8,7 +8,6 @@ export const addBillDetail = async (
   res: any,
   BillDetailData: any
 ) => {
-  console.log("🚀 ~ BillDetailData:", BillDetailData);
   try {
     const billdetail = await OrderDetailModel.create(BillDetailData);
     if (!billdetail) {

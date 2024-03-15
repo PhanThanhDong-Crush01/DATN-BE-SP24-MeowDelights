@@ -16,6 +16,7 @@ import uploadRouter from "./upload";
 import deleteAllDataRouter from "./deleteAllData";
 import routerContact from "./contact";
 import routerTypeproduct from "./type_product";
+import routerThongKe from "./thong_ke";
 
 const router = Router();
 
@@ -32,6 +33,7 @@ router.use("/type_voucher", typeVoucherRouter);
 router.use("/bill", billRouter);
 router.use("/bill_detail", billDetailRouter);
 router.use("/upload", uploadRouter);
+router.use("/statistics", routerThongKe);
 router.use("/deleteAllData", deleteAllDataRouter);
 
 export default router;
