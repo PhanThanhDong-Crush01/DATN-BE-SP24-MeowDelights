@@ -63,7 +63,7 @@ export const create = async (req: any, res: any) => {
   } catch (error) {
     console.error(`Error in create cart item: ${error.message}`);
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: `Error in create cart item: ${error.message}`,
     });
   }
 };

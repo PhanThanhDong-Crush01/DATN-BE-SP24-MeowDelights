@@ -22,7 +22,12 @@ export const createMyVoucher = async (req, res) => {
 export const getAllMyVoucher = async (req, res) => {
   try {
     const idVc = req.params.id;
-    const data = await MyVoucherModel.find({ idVoucher: idVc });
+    const data = await MyVoucherModel.find(
+      { idVoucher: idVc },
+      {
+        ExistsInStock: true,
+      }
+    );
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",
@@ -73,7 +78,9 @@ export const getAllMyVoucherUser = async (req, res) => {
 };
 export const getDetailMyVoucher = async (req, res) => {
   try {
-    const data = await MyVoucherModel.findById(req.params.id);
+    const data = await MyVoucherModel.findById(req.params.id, {
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Lấy khuyến mại chi tiết thất bại",
@@ -93,7 +100,9 @@ export const getDetailMyVoucher = async (req, res) => {
 };
 export const removeMyVoucher = async (req, res) => {
   try {
-    const data = await MyVoucherModel.findByIdAndDelete(req.params.id);
+    const data = await MyVoucherModel.findByIdAndUpdate(req.params.id, {
+      ExistsInStock: false,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Xóa khuyến mại thất bại",

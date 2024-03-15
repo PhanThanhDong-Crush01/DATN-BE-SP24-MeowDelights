@@ -1,9 +1,11 @@
 import { IProduct } from "../interface/IProduct";
 import AuthModel from "../models/auth";
+import CommentModel from "../models/comment";
 import Comment from "../models/comment";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import { commentSchema } from "../validation/comment";
+// xong comment
 export const createComment = async (req, res) => {
   try {
     const { error } = commentSchema.validate(req.body.datas);
@@ -31,6 +33,7 @@ export const createComment = async (req, res) => {
       userId,
       productId,
       productTypeId,
+      ExistsInStock: true,
     });
     console.log(data);
 
@@ -56,7 +59,9 @@ export const createComment = async (req, res) => {
 
 export const getAllComment = async (req, res) => {
   try {
-    const data = await Comment.find({});
+    const data = await Comment.find({
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách đánh giá thất bại",
@@ -188,5 +193,26 @@ export const getAllCommentsOfProduct = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+};
+export const getDetail = async (req, res) => {
+  try {
+    const data = await Comment.findById(req.params.id, {
+      ExistsInStock: true,
+    });
+    if (!data) {
+      return res.status(404).json({
+        message: "Đánh giá không tồn tại",
+      });
+    }
+    return res.status(200).json({
+      message: "Chi tiết đánh giá",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
+      message: error.message,
+    });
   }
 };
