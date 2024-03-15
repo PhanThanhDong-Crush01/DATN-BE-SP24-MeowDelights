@@ -22,16 +22,13 @@ export const getAllUser = async (req, res) => {
         const userBills = await OrderDetailModel.find({
           iduser: user._id,
         });
-        console.log(userBills);
         // Tính tổng số hóa đơn
         const totalBillCount = userBills.length;
-        console.log(totalBillCount);
         // Tính tổng tiền đã mua
         const totalAmount = userBills.reduce(
           (acc, datas) => acc + datas.money,
           0
         );
-        console.log(totalAmount);
 
         // Trả về thông tin người dùng kèm theo số hóa đơn và tổng tiền đã mua
         return {

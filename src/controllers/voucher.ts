@@ -2,6 +2,7 @@ import AuthModel from "../models/auth";
 import BillModel from "../models/bill";
 import MyVoucherModel from "../models/myVoucher";
 import TypeVoucherModel from "../models/typeVoucher";
+import VoucherModel from "../models/voucher";
 import Voucher from "../models/voucher";
 export const createVoucher = async (req, res) => {
   try {
@@ -61,30 +62,52 @@ export const createVoucher = async (req, res) => {
 
 export const getAllVoucher = async (req, res) => {
   try {
-    const data = await Voucher.find({});
+    const data = await Voucher.find();
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách khuyến mại thất bại",
       });
     }
-
+    let soVoucherHetHan = 0;
     const voucher = await Promise.all(
       data.map(async (item) => {
-        console.log(
-          "🚀 ~ data.map ~ item:",
-          item?._doc?.idTypeVoucher.toString()
-        );
         const type_voucher = await TypeVoucherModel.findById(
           item?._doc?.idTypeVoucher.toString()
         );
 
+        const expiry = new Date(item?._doc?.expiry).getTime();
+        if (expiry < Date.now() || item?._doc?.quantity == 0) {
+          const newVc = await VoucherModel.findByIdAndUpdate(
+            item?._doc?._id.toString(),
+            { status: false },
+            { new: true }
+          );
+          if (expiry < Date.now()) {
+            soVoucherHetHan++;
+          }
+
+          return (item._doc = newVc);
+        }
+
         return { ...item._doc, type_voucher };
       })
     );
+    // Đếm số lượng voucher có trạng thái true và false
+    const statusTrue = voucher.reduce((count, item) => {
+      return count + (item.status ? 1 : 0);
+    }, 0);
+    const daDungHet = voucher.reduce((count, item) => {
+      return count + (item.quantity == 0 ? 1 : 0);
+    }, 0);
+
+    const statusFalse = voucher.length - statusTrue;
 
     return res.status(200).json({
       message: "lấy danh sách khuyến mại thành công",
-
+      statusTrue: statusTrue,
+      statusFalse: statusFalse,
+      daDungHet: daDungHet,
+      soVoucherHetHan: soVoucherHetHan,
       datas: voucher,
     });
   } catch (error) {
