@@ -40,7 +40,7 @@ const BillSchema = new mongoose.Schema<any>(
     },
     ExistsInStock: {
       type: Boolean,
-      default: true,
+      default: "true",
     },
   },
   {
@@ -75,6 +75,10 @@ const OrderDetailSchema = new mongoose.Schema<any>(
     money: {
       type: Number,
       required: true,
+    },
+    ExistsInStock: {
+      type: Boolean,
+      default: "true",
     },
   },
   {

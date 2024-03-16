@@ -139,7 +139,9 @@ export const getOneBill = async (req, res) => {
   try {
     const idBill = req.params.id;
 
-    const data = await BillModel.findById(idBill, { ExistsInStock: true });
+    const data = await BillModel.findById(idBill, req.body, {
+      ExistsInStock: true,
+    });
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -202,7 +204,9 @@ export const getBillOfUser = async (req, res) => {
   try {
     const iduser = req.params.id;
 
-    const data = await BillModel.find({ iduser: iduser });
+    const data = await BillModel.find({ iduser: iduser }, req.body, {
+      ExistsInStock: true,
+    });
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -254,6 +258,7 @@ export const getBillOfUser = async (req, res) => {
           orderstatus: item.orderstatus,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
+          // ExistsInStock: false,
           voucher: "",
           user: {
             name: user._doc.name,
@@ -356,6 +361,31 @@ export const Change_OrderStatus = async (req, res) => {
     });
   }
 };
+const increaseProductQuantity = async (idprotype, quantity) => {
+  try {
+    // Tìm sản phẩm trong kho dựa trên idprotype và tăng số lượng
+    const product = await TypeProductModel.findOneAndUpdate(
+      { _id: idprotype },
+      { $inc: { quantity } }, // Tăng số lượng sản phẩm trong kho
+      { new: true } // Trả về bản ghi đã cập nhật
+    );
+
+    if (!product) {
+      console.log("Không tìm thấy sản phẩm để cập nhật số lượng");
+      // Xử lý trường hợp không tìm thấy sản phẩm trong kho
+    }
+
+    return product; // Trả về sản phẩm đã được cập nhật số lượng
+  } catch (error) {
+    console.error(
+      "Lỗi khi cập nhật số lượng sản phẩm trong kho:",
+      error.message
+    );
+    // Xử lý lỗi khi cập nhật số lượng sản phẩm trong kho
+    throw error;
+  }
+};
+
 export const CancelOrder = async (req, res) => {
   try {
     const idBill = req.params.id;
@@ -377,6 +407,7 @@ export const CancelOrder = async (req, res) => {
         message: "Không thể hủy đơn hàng với trạng thái hiện tại",
       });
     }
+
     // Cập nhật trạng thái đơn hàng
     const data = await BillModel.findByIdAndUpdate(
       idBill,
@@ -387,6 +418,14 @@ export const CancelOrder = async (req, res) => {
       return res.status(404).json({
         message: "Không thể thay đổi trạng thái đơn hàng",
       });
+    }
+    // Lấy thông tin chi tiết của các sản phẩm trong đơn hàng đã hủy
+    const billDetails = await OrderDetailModel.find({ idbill: idBill });
+
+    // Duyệt qua từng sản phẩm và cập nhật số lượng trong kho
+    for (const billDetail of billDetails) {
+      const { idprotype, quantity } = billDetail;
+      await increaseProductQuantity(idprotype, quantity);
     }
 
     const changeBillHistory = {

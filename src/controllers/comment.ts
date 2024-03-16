@@ -67,6 +67,7 @@ export const getAllComment = async (req, res) => {
         message: "lấy danh sách đánh giá thất bại",
       });
     }
+    const reversedUsersWithStats = data.reverse();
     return res.status(200).json({
       message: "lấy danh sách đánh giá thành công",
       datas: data,
