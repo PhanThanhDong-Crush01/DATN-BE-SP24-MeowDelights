@@ -4,11 +4,13 @@ import contactSchema from "../validation/contact";
 import auth from "../models/auth";
 import BillModel from "../models/bill";
 dotenv.config();
-
+// xong contact
 export const getAllContact = async (req, res) => {
   try {
     // const { data } = await axios.get(`${API_URL}/ContactModel`);
-    const data: any = await ContactModel.find();
+    const data: any = await ContactModel.find({
+      ExistsInStock: true,
+    });
 
     if (!data || data.length === 0) {
       return res.status(404).json({
@@ -51,7 +53,9 @@ export const getOneContact = async (req, res) => {
   try {
     const id = req.params.id;
     // const { data } = await axios.get(`${API_URL}/ContactModel/${id}`);
-    const data = await ContactModel.findById(id);
+    const data = await ContactModel.findById(id, {
+      ExistsInStock: true,
+    });
 
     if (!data) {
       return res.status(404).json({

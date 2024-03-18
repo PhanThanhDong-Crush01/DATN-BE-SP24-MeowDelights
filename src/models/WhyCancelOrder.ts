@@ -1,3 +1,4 @@
+import { boolean } from "joi";
 import mongoose from "mongoose";
 
 const whyCancelOrderSchema = new mongoose.Schema<any>(
@@ -21,6 +22,10 @@ const whyCancelOrderSchema = new mongoose.Schema<any>(
     message: {
       type: String,
       required: true,
+    },
+    ExistsInStock: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true, versionKey: false }

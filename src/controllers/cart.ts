@@ -10,7 +10,14 @@ export const create = async (req: any, res: any) => {
     const idprotype = cartItem.idprotype;
     const quantity = cartItem.quantity;
 
+    // cheeck số lượng khi thêm vào giỏ hàng
     const priceTypePro: any = await TypeProductModel.findById(idprotype);
+    const productInStock = priceTypePro.quantity;
+    if (quantity > productInStock) {
+      return res.status(400).json({
+        message: "Số lượng yêu cầu vượt quá số lượng có sẵn",
+      });
+    }
 
     const userCartItem: any = await OrderDetailModel.findOne({
       iduser: iduser,
@@ -63,7 +70,7 @@ export const create = async (req: any, res: any) => {
   } catch (error) {
     console.error(`Error in create cart item: ${error.message}`);
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: `Error in create cart item: ${error.message}`,
     });
   }
 };

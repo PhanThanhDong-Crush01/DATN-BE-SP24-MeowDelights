@@ -9,4 +9,5 @@ export interface IAuth {
   age: number;
   jobPosition: string;
   employee: string;
+  ExistsInStock: boolean;
 }

@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
     authorized_accounts: {
       type: String,
     },
+    ExistsInStock: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );

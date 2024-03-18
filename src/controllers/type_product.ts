@@ -75,7 +75,9 @@ export const create = async (req, res) => {
 
 export const getDetail = async (req, res) => {
   try {
-    const data = await TypeProductModel.findById(req.params.id);
+    const data = await TypeProductModel.findById(req.params.id, {
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Loại sản phẩm không tồn tại",
@@ -95,7 +97,9 @@ export const getDetail = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    const data = await TypeProductModel.findByIdAndDelete(req.params.id);
+    const data = await TypeProductModel.findByIdAndUpdate(req.params.id, {
+      ExistsInStock: false,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Không thể xóa loại sản phẩm",
@@ -115,7 +119,9 @@ export const remove = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const data = await TypeProductModel.find();
+    const data = await TypeProductModel.find({
+      ExistsInStock: true,
+    });
     if (!data) {
       return res.status(404).json({
         message: "Loại sản phẩm không tồn tại",

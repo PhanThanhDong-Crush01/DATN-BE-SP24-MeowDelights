@@ -33,6 +33,7 @@ const commentSchema = new mongoose.Schema<any>(
     },
     ExistsInStock: {
       type: Boolean,
+      default: true,
     },
   },
   { timestamps: true, versionKey: false }

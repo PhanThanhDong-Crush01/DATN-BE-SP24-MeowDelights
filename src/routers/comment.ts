@@ -4,12 +4,14 @@ import {
   createComment,
   getAllComment,
   getAllCommentsOfProduct,
+  getDetail,
   removeComment,
   updateComment,
 } from "../controllers/comment";
 // import { checkPermission } from "../middlewares/checkPermission";
 const router: Router = express.Router();
 router.get("/", getAllComment);
+router.get("/:id", getDetail);
 router.get("/product/:id", getAllCommentsOfProduct);
 router.post("/", createComment);
 router.put("/:id", updateComment);
