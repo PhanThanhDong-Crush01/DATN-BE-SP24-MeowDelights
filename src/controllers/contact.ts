@@ -53,9 +53,7 @@ export const getOneContact = async (req, res) => {
   try {
     const id = req.params.id;
     // const { data } = await axios.get(`${API_URL}/ContactModel/${id}`);
-    const data = await ContactModel.findById(id, {
-      ExistsInStock: true,
-    });
+    const data = await ContactModel.findById(id);
 
     if (!data) {
       return res.status(404).json({

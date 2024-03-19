@@ -7,7 +7,11 @@ export const create = async (req: any, res: any) => {
     const cartItem = req.body;
     const iduser = cartItem.iduser;
     const idpro = cartItem.idpro;
+    const namePro = cartItem.namePro;
+    const nameTypePro = cartItem.nameTypePro;
+    const imageTypePro = cartItem.imageTypePro;
     const idprotype = cartItem.idprotype;
+    const money = cartItem.money;
     const quantity = cartItem.quantity;
 
     // cheeck số lượng khi thêm vào giỏ hàng
@@ -15,7 +19,7 @@ export const create = async (req: any, res: any) => {
     const productInStock = priceTypePro.quantity;
     if (quantity > productInStock) {
       return res.status(400).json({
-        message: "Số lượng yêu cầu vượt quá số lượng có sẵn",
+        message: "Số lượng  vượt quá số lượng có sẵn",
       });
     }
 
@@ -23,11 +27,17 @@ export const create = async (req: any, res: any) => {
       iduser: iduser,
       idpro: idpro,
       idprotype: idprotype,
+      quantity: quantity,
+      money: money,
+      namePro: namePro,
+      nameTypePro: nameTypePro,
+      imageTypePro: imageTypePro,
     });
 
     if (userCartItem) {
       const upQuantity = quantity + userCartItem.quantity;
       var upMoney: number;
+
       if (userCartItem.money) {
         upMoney = quantity * priceTypePro.price + userCartItem.money;
       } else {
@@ -53,6 +63,9 @@ export const create = async (req: any, res: any) => {
         idprotype: idprotype,
         quantity: quantity,
         money: money,
+        namePro: namePro,
+        nameTypePro: nameTypePro,
+        imageTypePro: imageTypePro,
       };
 
       const newUserCartItem = await OrderDetailModel.create(newCartItem);

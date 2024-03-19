@@ -78,9 +78,7 @@ export const getAllMyVoucherUser = async (req, res) => {
 };
 export const getDetailMyVoucher = async (req, res) => {
   try {
-    const data = await MyVoucherModel.findById(req.params.id, {
-      ExistsInStock: true,
-    });
+    const data = await MyVoucherModel.findById(req.params.id);
     if (!data) {
       return res.status(404).json({
         message: "Lấy khuyến mại chi tiết thất bại",
