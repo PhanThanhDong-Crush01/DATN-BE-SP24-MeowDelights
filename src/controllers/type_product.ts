@@ -75,9 +75,7 @@ export const create = async (req, res) => {
 
 export const getDetail = async (req, res) => {
   try {
-    const data = await TypeProductModel.findById(req.params.id, {
-      ExistsInStock: true,
-    });
+    const data = await TypeProductModel.findById(req.params.id);
     if (!data) {
       return res.status(404).json({
         message: "Loại sản phẩm không tồn tại",
