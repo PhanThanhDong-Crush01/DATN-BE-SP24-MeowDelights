@@ -151,11 +151,11 @@ export const getAllCommentsOfProduct = async (req, res) => {
     const comments: any = await Comment.find({ productId: productId });
 
     // Kiểm tra xem có bất kỳ đánh giá nào không
-    if (!comments || comments.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Không tìm thấy đánh giá cho sản phẩm này." });
-    }
+    // if (!comments || comments.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "Không tìm thấy đánh giá cho sản phẩm này." });
+    // }
 
     // Duyệt qua từng đánh giá và lấy thông tin chi tiết của nó
     const commentDetails = await Promise.all(
@@ -198,9 +198,7 @@ export const getAllCommentsOfProduct = async (req, res) => {
 };
 export const getDetail = async (req, res) => {
   try {
-    const data = await Comment.findById(req.params.id, {
-      ExistsInStock: true,
-    });
+    const data = await Comment.findById(req.params.id);
     if (!data) {
       return res.status(404).json({
         message: "Đánh giá không tồn tại",

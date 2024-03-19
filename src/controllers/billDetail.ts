@@ -18,7 +18,12 @@ export const addBillDetail = async (
     const productType: any = await TypeProductModel.findById(
       BillDetailData.idprotype
     );
-
+    const productInStock = productType.quantity;
+    if (billdetail.quantity > productInStock) {
+      return res.status(400).json({
+        message: "Số lượng yêu cầu vượt quá số lượng có sẵn",
+      });
+    }
     const truSoLuongSP = productType?._doc?.quantity - BillDetailData.quantity;
     const updateQuantity = await TypeProductModel.findByIdAndUpdate(
       productType._id.toString(),

@@ -50,7 +50,21 @@ export const WhyCancelOrder = async (req, res) => {
 
     // Kiểm tra tính hợp lệ của userId và productTypeId so với cơ sở dữ liệu,
     // ví dụ: kiểm tra xem userId có tồn tại không.
+    const bill = await BillModel.findOne({ _id: idbill });
+    if (!bill) {
+      return res.status(404).json({
+        message: "Không tìm thấy đơn hàng.",
+      });
+    }
 
+    if (
+      bill.orderstatus !== "Chờ xác nhận" &&
+      bill.orderstatus !== "Đang chuẩn bị hàng"
+    ) {
+      return res.status(400).json({
+        message: "Không thể hủy đơn hàng ở trạng thái này.",
+      });
+    }
     // Tạo mới đối tượng comment
     const data = await WhyCancelOrderModel.create({
       ...message,

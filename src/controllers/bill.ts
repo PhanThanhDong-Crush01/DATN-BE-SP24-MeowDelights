@@ -104,19 +104,23 @@ export const getAllBill = async (req, res) => {
         return {
           _id: item._id,
           iduser: item.iduser,
-          money: totalMoney,
-          totalQuantity: totalQuantity,
+          nameUser: item.nameUser,
+          email: item.email,
+          money: item.money,
+          // totalQuantity: totalQuantity,
           date: item.date,
-          adress: item.adress,
+          address: item.address,
           tel: item.tel,
           idvc: item.idvc,
+          nameVc: item.nameVc,
+          decreaseVc: item.decreaseVc,
           paymentmethods: item.paymentmethods,
           paymentstatus: item.paymentstatus,
           orderstatus: item.orderstatus,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
-          voucher: voucher,
-          ExistsInStock: true,
+          // voucher: voucher,
+          // ExistsInStock: true,
           user: {
             name: user?._doc?.name,
             email: user?._doc?.email,
@@ -139,9 +143,7 @@ export const getOneBill = async (req, res) => {
   try {
     const idBill = req.params.id;
 
-    const data = await BillModel.findById(idBill, req.body, {
-      ExistsInStock: true,
-    });
+    const data = await BillModel.findById(idBill, req.body);
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -157,6 +159,7 @@ export const getOneBill = async (req, res) => {
     const billDetail = await Promise.all(
       billDetailData.map(async (item) => {
         const product = await ProductModel.findById(item?._doc.idpro);
+
         const type_product = await TypeProductModel.findById(
           item?._doc.idprotype
         );
@@ -204,9 +207,7 @@ export const getBillOfUser = async (req, res) => {
   try {
     const iduser = req.params.id;
 
-    const data = await BillModel.find({ iduser: iduser }, req.body, {
-      ExistsInStock: true,
-    });
+    const data = await BillModel.find({ iduser: iduser }, req.body);
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không tìm thấy hóa đơn",
@@ -247,12 +248,14 @@ export const getBillOfUser = async (req, res) => {
         return {
           _id: item._id,
           iduser: item.iduser,
-          money: totalMoney,
+          money: item.money,
           totalQuantity: totalQuantity,
           date: item.date,
           adress: item.adress,
           tel: item.tel,
           idvc: item.idvc,
+          nameVc: item.nameVc,
+          decreaseVc: item.decreaseVc,
           paymentmethods: item.paymentmethods,
           paymentstatus: item.paymentstatus,
           orderstatus: item.orderstatus,
