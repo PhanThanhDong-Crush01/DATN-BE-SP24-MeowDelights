@@ -9,7 +9,10 @@ export const addBillDetail = async (
   BillDetailData: any
 ) => {
   try {
-    const billdetail = await OrderDetailModel.create(BillDetailData);
+    const billdetail = await OrderDetailModel.create({
+      ...BillDetailData,
+      iduser: undefined,
+    });
     if (!billdetail) {
       return res.status(500).json({
         message: "Thêm hóa đơn chi tiết thất bại",
