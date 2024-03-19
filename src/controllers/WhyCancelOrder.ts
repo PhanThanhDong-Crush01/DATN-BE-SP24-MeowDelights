@@ -1,5 +1,6 @@
 import WhyCancelOrderModel from "../models/WhyCancelOrder";
 import BillModel, { OrderDetailModel } from "../models/bill";
+import ChangeBillHistoryModel from "../models/changeBillHistory";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import whyCancelOrderSchema from "../validation/whycancenorder";
@@ -32,19 +33,13 @@ const increaseProductQuantity = async (idprotype, quantity) => {
 
 export const WhyCancelOrder = async (req, res) => {
   try {
-    const { error } = whyCancelOrderSchema.validate(req.body.datas);
-    if (error) {
-      return res.status(400).json({
-        message: error.details[0].message,
-      });
-    }
     // Trích xuất dữ liệu từ req.body
-    const { iduser, idpro, idprotype, idbill, ...message } = req.body;
+    const { iduser, idbill, message } = req.body;
 
     // Kiểm tra tính hợp lệ của userId và productTypeId
-    if (!iduser || !idpro || !idprotype || !idbill) {
+    if (!iduser || !idbill) {
       return res.status(400).json({
-        message: "Thiếu thông tin bắt buộc: userId hoặc productTypeId hoặc .",
+        message: "Thiếu thông tin bắt buộc: userId hoặc billId hoặc .",
       });
     }
 
@@ -62,28 +57,36 @@ export const WhyCancelOrder = async (req, res) => {
       bill.orderstatus !== "Đang chuẩn bị hàng"
     ) {
       return res.status(400).json({
-        message: "Không thể hủy đơn hàng ở trạng thái này.",
+        message:
+          "Không thể hủy đơn hàng ở trạng thái hiện tại, tải lại trang để xác nhận!",
       });
     }
     // Tạo mới đối tượng comment
     const data = await WhyCancelOrderModel.create({
-      ...message,
+      message,
       ExistsInStock: true,
       iduser,
-      idpro,
-      idprotype,
       idbill,
     });
-    console.log(data);
 
     // Kiểm tra nếu không tạo được comment
     if (!data) {
       return res.status(404).json({
-        message: "Tạo lí do hủy đơn hàng thất bại.",
+        message: "Thêm lí do hủy đơn hàng thất bại.",
       });
     }
     await BillModel.updateOne({ _id: idbill }, { orderstatus: "Đã hủy hàng" });
-
+    const changeBillHistory = {
+      idBill: idbill,
+      idStaff: iduser,
+      statusOrder: "Đã hủy hàng",
+    };
+    const changeOrder = await ChangeBillHistoryModel.create(changeBillHistory);
+    if (!data) {
+      return res.status(404).json({
+        message: "Không thể lưu lịch sử thay đổi trạng thái!",
+      });
+    }
     const billDetails = await OrderDetailModel.find({ idbill });
 
     // Duyệt qua từng sản phẩm và cập nhật số lượng trong kho
@@ -96,6 +99,7 @@ export const WhyCancelOrder = async (req, res) => {
       message: "Tạo lí do hủy đơn hàng thành công.",
       billDetails,
       data,
+      changeOrder,
     });
   } catch (error) {
     // Xử lý các loại lỗi khác nhau
@@ -115,6 +119,24 @@ export const getAllWhyCancelOrder = async (req, res) => {
     }
     return res.status(200).json({
       message: "lấy danh sách lí do thành công",
+      datas: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const getOneWhyCancelOrder = async (req, res) => {
+  try {
+    const data = await WhyCancelOrderModel.findOne({ idbill: req.params.id });
+    if (!data) {
+      return res.status(404).json({
+        message: "Tìm kiếm lí do hủy hàng thất bại",
+      });
+    }
+    return res.status(200).json({
+      message: "Tìm kiếm lí do hủy hàng thành công",
       datas: data,
     });
   } catch (error) {

@@ -1,5 +1,5 @@
 import AuthModel from "../../models/auth";
-import BillModel from "../../models/bill";
+import BillModel, { OrderDetailModel } from "../../models/bill";
 import CategoryModel from "../../models/category";
 import MyVoucherModel from "../../models/myVoucher";
 import ProductModel from "../../models/product";
@@ -15,8 +15,8 @@ export const deleteAllData = async (req: any, res: any) => {
     //await VoucherModel.deleteMany();
     // await TypeVoucherModel.deleteMany();
     // await AuthModel.deleteMany();
-    await BillModel.deleteMany({ paymentmethods: "Thanh toán MoMo" });
-    // await OrderDetailModel.deleteMany();
+    await BillModel.deleteMany();
+    await OrderDetailModel.deleteMany();
     //await MyVoucherModel.deleteMany();
 
     return res.status(200).json({

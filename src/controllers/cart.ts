@@ -7,19 +7,19 @@ export const create = async (req: any, res: any) => {
     const cartItem = req.body;
     const iduser = cartItem.iduser;
     const idpro = cartItem.idpro;
-    const namePro = cartItem.namePro;
-    const nameTypePro = cartItem.nameTypePro;
-    const imageTypePro = cartItem.imageTypePro;
     const idprotype = cartItem.idprotype;
-    const money = cartItem.money;
     const quantity = cartItem.quantity;
+    const productOne: any = await ProductModel.findById(idpro);
+    const priceTypePro: any = await TypeProductModel.findById(idprotype);
+    const namePro = productOne.name;
+    const nameTypePro = priceTypePro.color + " - " + priceTypePro.size;
+    const imageTypePro = priceTypePro.image;
 
     // cheeck số lượng khi thêm vào giỏ hàng
-    const priceTypePro: any = await TypeProductModel.findById(idprotype);
     const productInStock = priceTypePro.quantity;
     if (quantity > productInStock) {
       return res.status(400).json({
-        message: "Số lượng  vượt quá số lượng có sẵn",
+        message: "Số lượng vượt quá số lượng có sẵn",
       });
     }
 
@@ -27,16 +27,16 @@ export const create = async (req: any, res: any) => {
       iduser: iduser,
       idpro: idpro,
       idprotype: idprotype,
-      quantity: quantity,
-      money: money,
-      namePro: namePro,
-      nameTypePro: nameTypePro,
-      imageTypePro: imageTypePro,
     });
 
     if (userCartItem) {
       const upQuantity = quantity + userCartItem.quantity;
       var upMoney: number;
+      if (upQuantity > productInStock) {
+        return res.status(400).json({
+          message: "Số lượng vượt quá tồn kho",
+        });
+      }
 
       if (userCartItem.money) {
         upMoney = quantity * priceTypePro.price + userCartItem.money;
@@ -94,11 +94,16 @@ export const update = async (req: any, res: any) => {
     const quantity = req.body.quantity;
 
     const userCartItem = await OrderDetailModel.findById(id);
-    const priceTypePro: any = await TypeProductModel.findById(
+    const TypePro: any = await TypeProductModel.findById(
       userCartItem.idprotype
     );
+    if (TypePro.quantity <= quantity) {
+      return res.status(500).json({
+        message: "Số lượng sản phẩm tồn kho không đủ!",
+      });
+    }
 
-    const newMoney = quantity * priceTypePro.price;
+    const newMoney = quantity * TypePro.price;
     const updateCartItem = await OrderDetailModel.findByIdAndUpdate(
       id,
       { quantity: quantity, money: newMoney },
