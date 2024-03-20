@@ -20,7 +20,7 @@ const voucherSchema = new mongoose.Schema<any>(
     },
     startDate: {
       type: String,
-      required: true,
+      //required: true,
     },
     expiry: {
       type: String,
@@ -37,6 +37,32 @@ const voucherSchema = new mongoose.Schema<any>(
     ExistsInStock: {
       type: Boolean,
       default: true,
+    },
+
+    //phan phat voucher
+    minTotalBill1: {
+      type: Number,
+    },
+    quantity1: {
+      type: Number,
+    },
+    minTotalBill2: {
+      type: Number,
+    },
+    quantity2: {
+      type: Number,
+    },
+    minTotalBill3: {
+      type: Number,
+    },
+    quantity3: {
+      type: Number,
+    },
+    minTotalBill4: {
+      type: Number,
+    },
+    quantity4: {
+      type: Number,
     },
   },
   { timestamps: true, versionKey: false }

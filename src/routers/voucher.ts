@@ -12,6 +12,6 @@ const router: Router = express.Router();
 router.get("/", getAllVoucher);
 router.get("/:id", getDetailVoucher);
 router.post("/", createVoucher);
-router.put("/:id", updateVoucher);
+router.patch("/:id", updateVoucher);
 router.delete("/:id", removeVoucher);
 export default router;
