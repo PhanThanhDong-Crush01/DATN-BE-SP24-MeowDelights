@@ -5,8 +5,10 @@ import jwt from "jsonwebtoken";
 import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import AuthModel from "../models/auth";
-import { OrderDetailModel } from "../models/bill";
+import BillModel, { OrderDetailModel } from "../models/bill";
 import mongoose from "mongoose";
+import VoucherModel from "../models/voucher";
+import MyVoucherModel from "../models/myVoucher";
 // // xong auth
 dotenv.config();
 export const getAllUser = async (req, res) => {
@@ -20,13 +22,13 @@ export const getAllUser = async (req, res) => {
     const usersWithStats = await Promise.all(
       users.map(async (user) => {
         // Lấy danh sách hóa đơn của người dùng
-        const userBills = await OrderDetailModel.find({
+        const userBills = await BillModel.find({
           iduser: user._id,
         });
         // Tính tổng số hóa đơn
         const totalBillCount = userBills.length;
         // Tính tổng tiền đã mua
-        const totalAmount = userBills.reduce(
+        const totalAmountNew = userBills.reduce(
           (acc, datas) => acc + datas.money,
           0
         );
@@ -46,7 +48,7 @@ export const getAllUser = async (req, res) => {
           jobPosition: user.jobPosition,
           discount_points: user.discount_points,
           totalBillCount: totalBillCount,
-          totalAmount: totalAmount,
+          totalAmount: totalAmountNew,
         };
       })
     );
@@ -134,6 +136,16 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60,
     });
+
+    const dataVc = await VoucherModel.find();
+    for (const item of dataVc) {
+      await MyVoucherModel.create({
+        idVoucher: item?._doc?._id,
+        idUser: user?._id,
+        quantity: 1,
+      });
+    }
+
     return res.status(201).json({
       message: "Đăng ký thành công",
       accessToken: token,
@@ -279,10 +291,61 @@ export const createAuth = async (req, res) => {
       expiresIn: 60 * 60, // Token hết hạn sau 1 giờ
     });
 
+    const dataVc = await VoucherModel.find();
+    for (const item of dataVc) {
+      await MyVoucherModel.create({
+        idVoucher: item?._doc?._id,
+        idUser: newUser?._id,
+        quantity: 1,
+      });
+    }
+
     return res.status(200).json({
       message: "Tạo tài khoản thành công",
       user: newUser,
       token: token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi khi tạo tài khoản: " + error.message,
+    });
+  }
+};
+export const createKhachVangLai = async (req, res) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+
+    // Kiểm tra email đã tồn tại trong hệ thống hay chưa
+    const userExist = await AuthModel.findOne({ email });
+    if (userExist) {
+      return res.status(400).json({
+        message: "Email đã tồn tại",
+      });
+    }
+
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Tạo mới người dùng
+    const newUser = await AuthModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      address,
+    });
+    newUser.password = undefined;
+    const dataVc = await VoucherModel.find();
+    for (const item of dataVc) {
+      await MyVoucherModel.create({
+        idVoucher: item?._doc?._id,
+        idUser: newUser?._id,
+        quantity: 1,
+      });
+    }
+    return res.status(200).json({
+      message: "Tạo tài khoản thành công",
+      user: newUser,
     });
   } catch (error) {
     return res.status(500).json({
