@@ -9,7 +9,10 @@ export const addBillDetail = async (
   BillDetailData: any
 ) => {
   try {
-    const billdetail = await OrderDetailModel.create(BillDetailData);
+    const billdetail = await OrderDetailModel.create({
+      ...BillDetailData,
+      iduser: undefined,
+    });
     if (!billdetail) {
       return res.status(500).json({
         message: "Thêm hóa đơn chi tiết thất bại",
@@ -18,7 +21,12 @@ export const addBillDetail = async (
     const productType: any = await TypeProductModel.findById(
       BillDetailData.idprotype
     );
-
+    const productInStock = productType.quantity;
+    if (billdetail.quantity > productInStock) {
+      return res.status(400).json({
+        message: "Số lượng yêu cầu vượt quá số lượng có sẵn",
+      });
+    }
     const truSoLuongSP = productType?._doc?.quantity - BillDetailData.quantity;
     const updateQuantity = await TypeProductModel.findByIdAndUpdate(
       productType._id.toString(),

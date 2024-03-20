@@ -151,27 +151,22 @@ export const getAllCommentsOfProduct = async (req, res) => {
     const comments: any = await Comment.find({ productId: productId });
 
     // Kiểm tra xem có bất kỳ đánh giá nào không
-    if (!comments || comments.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Không tìm thấy đánh giá cho sản phẩm này." });
-    }
+    // if (!comments || comments.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "Không tìm thấy đánh giá cho sản phẩm này." });
+    // }
 
     // Duyệt qua từng đánh giá và lấy thông tin chi tiết của nó
     const commentDetails = await Promise.all(
       comments.map(async (comment: any) => {
-        console.log("🚀 ~ comments.map ~ comment:", comment?._doc);
-
         const product = await ProductModel.findById(comment?._doc?.productId);
         const productType = await TypeProductModel.findById(
           comment?._doc?.productTypeId
         );
         const user = await AuthModel.findById(comment.userId);
         if (!user) {
-          // Xử lý trường hợp user không tồn tại
-          return res
-            .status(404)
-            .json({ message: "Không tìm thấy người dùng." });
+          return;
         }
         return {
           comment: {
@@ -179,9 +174,9 @@ export const getAllCommentsOfProduct = async (req, res) => {
             product: product,
             productType: productType,
             user: {
-              name: user.name || "",
-              email: user.email || "",
-              img: user.imgUser || "",
+              name: user?.name || "",
+              email: user?.email || "",
+              img: user?.imgUser || "",
             },
           },
         };
@@ -198,9 +193,7 @@ export const getAllCommentsOfProduct = async (req, res) => {
 };
 export const getDetail = async (req, res) => {
   try {
-    const data = await Comment.findById(req.params.id, {
-      ExistsInStock: true,
-    });
+    const data = await Comment.findById(req.params.id);
     if (!data) {
       return res.status(404).json({
         message: "Đánh giá không tồn tại",

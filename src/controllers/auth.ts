@@ -63,7 +63,7 @@ export const getAllUser = async (req, res) => {
 };
 export const getOne = async (req, res) => {
   try {
-    const user = await auth.findById(req.params.id, { ExistsInStock: true });
+    const user = await auth.findById(req.params.id);
     if (!user) {
       return res.status(404).json({
         massage: "không có tài khoản nào",
