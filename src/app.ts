@@ -3,8 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import router from "./routers/index";
-import CategoryModel from "./models/category";
-import axios from "axios";
+
 dotenv.config();
 const { PORT, DB_URL } = process.env;
 
@@ -24,6 +23,55 @@ const connect = async () => {
 connect();
 
 app.use("/api", router);
+
+// import { initializeApp } from "firebase/app";
+// import {
+//   getAuth,
+//   signInWithPhoneNumber,
+//   RecaptchaVerifier,
+// } from "firebase/auth";
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBMwhg1JxIyWyKgHDnodLjZ7Wvlk1kg118",
+//   authDomain: "meowmeow-8444f.firebaseapp.com",
+//   projectId: "meowmeow-8444f",
+//   storageBucket: "meowmeow-8444f.appspot.com",
+//   messagingSenderId: "519401576004",
+//   appId: "1:519401576004:web:67438d9ab8546ea1410e11",
+// };
+
+// // Khởi tạo Firebase
+// const firebaseApp = initializeApp(firebaseConfig);
+// const auth = getAuth(firebaseApp);
+
+// app.post("/api/send-otp", async (req, res) => {
+//   const { otp, phoneNumber } = req.body;
+
+//   if (!otp || !phoneNumber) {
+//     return res.status(400).json({ message: "Missing OTP or phone number." });
+//   }
+
+//   try {
+//     const appVerifier = new RecaptchaVerifier("recaptcha-container-id", {
+//       size: "invisible",
+//       callback: (response) => {
+//         // This will be triggered when reCAPTCHA has verified successfully
+//         console.log("reCAPTCHA verified successfully", response);
+//       },
+//       "expired-callback": () => {
+//         // This will be triggered when the reCAPTCHA response expires
+//         console.log("reCAPTCHA response expired");
+//       },
+//     });
+
+//     await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+
+//     return res.status(200).json({ message: "OTP sent successfully." });
+//   } catch (error) {
+//     console.error("Error sending OTP:", error);
+//     return res.status(500).json({ message: "Failed to send OTP." });
+//   }
+// });
 
 app.post("/api/send-otp", async (req, res) => {
   const { otp, phoneNumber } = req.body;

@@ -3,6 +3,7 @@ import {
   AuthWithRole,
   createAuth,
   deleteEmployee,
+  createKhachVangLai,
   editAuth,
   getAllUser,
   getOne,
@@ -21,6 +22,7 @@ const router: Router = express.Router();
 router.get("/", getAllUser);
 router.post("/signup", signup);
 router.post("/createAuth", createAuth);
+router.post("/createKhachVangLai", createKhachVangLai);
 router.patch("/editAuth/:id", editAuth);
 router.post("/signin", signin);
 router.delete("/:id", removeUser);
