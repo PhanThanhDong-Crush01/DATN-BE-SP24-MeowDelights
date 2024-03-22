@@ -68,6 +68,61 @@ export const getAllBill = async (req, res) => {
       });
     }
 
+    const newData = await Promise.all(
+      data.map(async (item: any) => {
+        const billDetails = await OrderDetailModel.find({
+          idbill: item._id,
+        });
+        // Tính tổng tiền của hóa đơn
+        const totalMoney = billDetails.reduce((total: number, current: any) => {
+          return total + current.money;
+        }, 0);
+
+        // Tính tổng số lượng sản phẩm trong hóa đơn
+        const totalQuantity = billDetails.reduce(
+          (total: number, current: any) => {
+            return total + current.quantity;
+          },
+          0
+        );
+
+        const user: any = await AuthModel.findById(item.iduser);
+
+        let voucher: any = "";
+        if (item.idvc != "") {
+          voucher = await VoucherModel.findById(item.idvc);
+          console.log("🚀 ~ data.map ~ voucher:", voucher);
+          console.log("🚀 ~ data.map ~ item.idvc:", item.idvc);
+        }
+
+        return {
+          _id: item._id,
+          iduser: item.iduser,
+          nameUser: item.nameUser,
+          email: item.email,
+          money: item.money,
+          // totalQuantity: totalQuantity,
+          date: item.date,
+          address: item.address,
+          tel: item.tel,
+          idvc: item.idvc,
+          nameVc: item.nameVc,
+          decreaseVc: item.decreaseVc,
+          paymentmethods: item.paymentmethods,
+          paymentstatus: item.paymentstatus,
+          orderstatus: item.orderstatus,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          // voucher: voucher,
+          // ExistsInStock: true,
+          user: {
+            name: user?._doc?.name,
+            email: user?._doc?.email,
+          },
+        };
+      })
+    );
+
     return res.status(200).json({
       message: "Gọi danh sách hóa đơn thành công!",
       datas: data,
@@ -92,6 +147,21 @@ export const getOneBill = async (req, res) => {
     const billDetailData = await OrderDetailModel.find({
       idbill: data._id,
     });
+    const billDetail = await Promise.all(
+      billDetailData.map(async (item) => {
+        const product = await ProductModel.findById(item?._doc.idpro);
+
+        const type_product = await TypeProductModel.findById(
+          item?._doc.idprotype
+        );
+
+        return {
+          ...item._doc,
+          product: product,
+          type_product: type_product,
+        };
+      })
+    );
 
     const billChangeStatusOrderHistoryData = await ChangeBillHistoryModel.find({
       idBill: data._id,
@@ -149,6 +219,29 @@ export const getBillOfUser = async (req, res) => {
         );
 
         return {
+          _id: item._id,
+          iduser: item.iduser,
+          money: item.money,
+          totalQuantity: totalQuantity,
+          date: item.date,
+          adress: item.adress,
+          tel: item.tel,
+          idvc: item.idvc,
+          nameVc: item.nameVc,
+          decreaseVc: item.decreaseVc,
+          paymentmethods: item.paymentmethods,
+          paymentstatus: item.paymentstatus,
+          orderstatus: item.orderstatus,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+
+          voucher: "",
+          user: {
+            name: user._doc.name,
+            email: user._doc.email,
+          },
+          products: products,
+
           ...item?._doc,
           totalQuantity: totalQuantity,
           billDetails,

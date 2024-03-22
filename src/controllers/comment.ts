@@ -59,18 +59,41 @@ export const createComment = async (req, res) => {
 
 export const getAllComment = async (req, res) => {
   try {
-    const data = await Comment.find({
-      ExistsInStock: true,
-    });
+    const data = await Comment.find({ ExistsInStock: true });
     if (!data) {
       return res.status(404).json({
         message: "lấy danh sách đánh giá thất bại",
       });
     }
     const reversedUsersWithStats = data.reverse();
+    const updatedData = await Promise.all(
+      data?.map(
+        async (item: {
+          _doc: any;
+          productId: any;
+          productTypeId: any;
+          userId: any;
+        }) => {
+          const productInfo = await ProductModel.findById(item.productId);
+          console.log(productInfo);
+          const productTypeInfo = await TypeProductModel.findById(
+            item.productTypeId
+          );
+          console.log(productTypeInfo);
+          const userInfo = await AuthModel.findById(item?.userId);
+          console.log(userInfo);
+          return {
+            ...item._doc,
+            productInfo: productInfo,
+            productTypeInfo: productTypeInfo,
+            userInfo: userInfo,
+          };
+        }
+      )
+    );
     return res.status(200).json({
       message: "lấy danh sách đánh giá thành công",
-      datas: data,
+      datas: updatedData,
     });
   } catch (error) {
     return res.status(500).json({
@@ -148,7 +171,10 @@ export const getAllCommentsOfProduct = async (req, res) => {
     const productId = req.params.id;
 
     // Tìm tất cả các đánh giá của sản phẩm
-    const comments: any = await Comment.find({ productId: productId });
+    const comments: any = await Comment.find({
+      productId: productId,
+      ExistsInStock: true,
+    });
 
     // Kiểm tra xem có bất kỳ đánh giá nào không
     // if (!comments || comments.length === 0) {
@@ -206,6 +232,50 @@ export const getDetail = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       name: error.name,
+      message: error.message,
+    });
+  }
+};
+export const statisticsComment = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    console.log(productId);
+    const data = await Comment.find({ productId });
+    console.log(data);
+    if (!data) {
+      return res.status(404).json({
+        message: "lấy danh sách đánh giá thất bại",
+      });
+    }
+    const productRatings = data.filter(
+      (data) => data._doc.productId === productId
+    );
+    console.log(productRatings);
+
+    // Kiểm tra xem sản phẩm có ít nhất một đánh giá không
+    if (productRatings.length === 0) {
+      return undefined; // Trả về undefined nếu không có đánh giá nào
+    }
+
+    // Tính tổng số sao
+    const totalStars = productRatings.reduce(
+      (total, current) => total + current.star,
+      0
+    );
+    console.log(totalStars);
+
+    // Tính trung bình xếp hạng
+    const averageRating = (totalStars / productRatings.length).toFixed(1);
+
+    // return averageRating;
+
+    return res.status(200).json({
+      message: "lấy danh sách đánh giá thành công",
+      productId: productId,
+      datas: averageRating,
+    });
+  } catch (error) {
+    return res.status(500).json({
       message: error.message,
     });
   }
