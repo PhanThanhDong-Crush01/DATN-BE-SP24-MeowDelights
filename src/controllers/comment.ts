@@ -160,18 +160,13 @@ export const getAllCommentsOfProduct = async (req, res) => {
     // Duyệt qua từng đánh giá và lấy thông tin chi tiết của nó
     const commentDetails = await Promise.all(
       comments.map(async (comment: any) => {
-        console.log("🚀 ~ comments.map ~ comment:", comment?._doc);
-
         const product = await ProductModel.findById(comment?._doc?.productId);
         const productType = await TypeProductModel.findById(
           comment?._doc?.productTypeId
         );
         const user = await AuthModel.findById(comment.userId);
         if (!user) {
-          // Xử lý trường hợp user không tồn tại
-          return res
-            .status(404)
-            .json({ message: "Không tìm thấy người dùng." });
+          return;
         }
         return {
           comment: {
@@ -179,9 +174,9 @@ export const getAllCommentsOfProduct = async (req, res) => {
             product: product,
             productType: productType,
             user: {
-              name: user.name || "",
-              email: user.email || "",
-              img: user.imgUser || "",
+              name: user?.name || "",
+              email: user?.email || "",
+              img: user?.imgUser || "",
             },
           },
         };

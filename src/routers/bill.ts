@@ -18,6 +18,7 @@ import {
 import {
   WhyCancelOrder,
   getAllWhyCancelOrder,
+  getOneWhyCancelOrder,
   removeWhyOrder,
   updateWhyOrder,
 } from "../controllers/WhyCancelOrder";
@@ -35,6 +36,7 @@ router.get("/revenue", dailyRevenueAndCategorySales);
 router.get("/:id", getOneBill);
 router.delete("/:id", removeBill);
 router.get("/user/:id", getBillOfUser);
+router.get("/whyCanCelOrder/:id", getOneWhyCancelOrder);
 // router.get("/user/:id", getBillOfUser);
 router.patch("/cancelOrder/:id", CancelOrder);
 router.patch("/changePaymentStatus/:id", Change_PaymentStatus);

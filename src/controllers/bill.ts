@@ -1,3 +1,4 @@
+import WhyCancelOrderModel from "../models/WhyCancelOrder";
 import AuthModel from "../models/auth";
 import BillModel, { OrderDetailModel } from "../models/bill";
 import CategoryModel from "../models/category";
@@ -24,13 +25,7 @@ export const createBill = async (req: any, res: any) => {
 
     const idbill = bill._id;
     const iduser = bill.iduser;
-    const userAuth = await AuthModel.findByIdAndUpdate(
-      iduser,
-      {
-        discount_points: bill.money * 0.03,
-      },
-      { new: true }
-    );
+    await OrderDetailModel.deleteMany({ iduser: iduser });
     const billdetails = req.body.billdetails;
     for (const TypeBillDetail of billdetails) {
       const newBillDetail = { ...TypeBillDetail, idbill };
@@ -53,7 +48,6 @@ export const createBill = async (req: any, res: any) => {
       data: {
         bill,
         billdetails: BillDetailData,
-        discount_points: bill.money * 0.03,
         changeOrder,
       },
     });
@@ -131,7 +125,7 @@ export const getAllBill = async (req, res) => {
 
     return res.status(200).json({
       message: "Gọi danh sách hóa đơn thành công!",
-      datas: newData,
+      datas: data,
     });
   } catch (error) {
     return res.status(500).json({
@@ -149,9 +143,6 @@ export const getOneBill = async (req, res) => {
         message: "Không tìm thấy hóa đơn",
       });
     }
-
-    const auth: any = await AuthModel.findById(data.iduser);
-    const user = auth?._doc;
 
     const billDetailData = await OrderDetailModel.find({
       idbill: data._id,
@@ -193,8 +184,8 @@ export const getOneBill = async (req, res) => {
 
     return res.status(200).json({
       message: "Tìm kiếm hóa đơn thành công!",
-      bill: { ...data?._doc, user },
-      billDetails: billDetail,
+      bill: data?._doc,
+      billDetails: billDetailData,
       billChangeStatusOrderHistory,
     });
   } catch (error) {
@@ -219,20 +210,6 @@ export const getBillOfUser = async (req, res) => {
         const billDetails = await OrderDetailModel.find({
           idbill: item._id,
         });
-        const products = await Promise.all(
-          billDetails.map(async (detail: any) => {
-            const product = await ProductModel.findById(detail.idpro);
-            const productType = await TypeProductModel.findById(
-              detail.idprotype
-            ); // Adjust this according to your schema
-            return { product, productType };
-          })
-        );
-        // Tính tổng tiền của hóa đơn
-        const totalMoney = billDetails.reduce((total: number, current: any) => {
-          return total + current.money;
-        }, 0);
-
         // Tính tổng số lượng sản phẩm trong hóa đơn
         const totalQuantity = billDetails.reduce(
           (total: number, current: any) => {
@@ -241,10 +218,6 @@ export const getBillOfUser = async (req, res) => {
           0
         );
 
-        const user: any = await AuthModel.findById(item.iduser);
-        if (item.idvc != "") {
-          const voucher: any = await VoucherModel.findById(item.idvc);
-        }
         return {
           _id: item._id,
           iduser: item.iduser,
@@ -261,13 +234,17 @@ export const getBillOfUser = async (req, res) => {
           orderstatus: item.orderstatus,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
-          // ExistsInStock: false,
+
           voucher: "",
           user: {
             name: user._doc.name,
             email: user._doc.email,
           },
           products: products,
+
+          ...item?._doc,
+          totalQuantity: totalQuantity,
+          billDetails,
         };
       })
     );
@@ -317,6 +294,12 @@ export const Change_PaymentStatus = async (req, res) => {
 export const Change_OrderStatus = async (req, res) => {
   try {
     const idBill = req.params.id;
+    const bilbillbill = await BillModel.findById(idBill);
+    if (bilbillbill?.orderstatus == "Đã hủy hàng") {
+      return res.status(500).json({
+        message: "Không thể thay đổi trạng thái đơn hàng cho đơn đã hủy!",
+      });
+    }
     const newOrderStatus = req.body.orderstatus;
 
     const idStaff = req.body.idStaff;
@@ -439,9 +422,17 @@ export const CancelOrder = async (req, res) => {
     const changeOrder = await ChangeBillHistoryModel.create(changeBillHistory);
     if (!data) {
       return res.status(404).json({
-        message: "Không thể hủy đươn hàng!",
+        message: "Không thể hủy đơn hàng!",
       });
     }
+
+    await WhyCancelOrderModel.create({
+      message: "Đơn hàng bị hủy bởi nhân viên quản lý - kiểm tra đơn hàng",
+      ExistsInStock: true,
+      iduser: idStaff,
+      idbill: idBill,
+    });
+
     return res.status(200).json({
       message: "Hủy đơn hàng thành công!",
       bill: data,

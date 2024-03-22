@@ -11,14 +11,6 @@ const whyCancelOrderSchema = new mongoose.Schema<any>(
       type: String,
       required: true,
     },
-    idpro: {
-      type: String,
-      required: true,
-    },
-    idprotype: {
-      type: String,
-      required: true,
-    },
     message: {
       type: String,
       required: true,

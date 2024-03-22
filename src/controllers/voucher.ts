@@ -6,56 +6,72 @@ import VoucherModel from "../models/voucher";
 import Voucher from "../models/voucher";
 export const createVoucher = async (req, res) => {
   try {
-    const voucher = req.body.voucher;
-    const phanPhatVoucher = req.body.phanPhatVoucher;
+    const voucher = req.body;
+    console.log("🚀 ~ createVoucher ~ voucher:", voucher);
     const data = await Voucher.create(voucher);
+    console.log("🚀 ~ createVoucher ~ data:", data);
     if (!data) {
       return res.status(404).json({
-        message: "tạo khuyến mãi thất bại",
+        message: "Tạo khuyến mãi thất bại",
       });
     }
 
     const idVoucher = data._id;
-    const users: any = await AuthModel.find();
-    let totalQuantity: number = 0; // Tổng số lượng voucher đã tạo
-
+    const users = await AuthModel.find();
+    const phanPhatVoucher = [
+      {
+        minTotalBill: req.body.minTotalBill1,
+        quantity: req.body.quantity1,
+      },
+      {
+        minTotalBill: req.body.minTotalBill2,
+        quantity: req.body.quantity2,
+      },
+      {
+        minTotalBill: req.body.minTotalBill3,
+        quantity: req.body.quantity3,
+      },
+      {
+        minTotalBill: req.body.minTotalBill4,
+        quantity: req.body.quantity4,
+      },
+    ];
     // Sắp xếp phanPhatVoucher theo thứ tự giảm dần của minTotalBill
     const phanPhatVoucherSort = phanPhatVoucher.sort((a, b) => {
-      return parseInt(b.minTotalBil) - parseInt(a.minTotalBil);
+      return parseInt(b.minTotalBill) - parseInt(a.minTotalBill);
     });
+
+    // Mảng để lưu trữ ID của các người dùng đã được thêm voucher
+    let addedUsers: any = [];
 
     // Duyệt qua từng người dùng
     for (const user of users) {
-      // Duyệt qua các điều kiện từ phanPhatVoucher để cập nhật quantity
-      let quantity = 1;
-
       for (const item of phanPhatVoucherSort) {
-        if (Number(user?.totalAmount) >= Number(item.minTotalBil)) {
-          quantity = Number(item.quantity);
-          break; // Thoát vòng lặp nếu đã tìm được điều kiện phù hợp
+        if (
+          user &&
+          user._id &&
+          Number(user.totalAmount) >= Number(item.minTotalBill) &&
+          !addedUsers.includes(user?._id.toString())
+        ) {
+          await MyVoucherModel.create({
+            idVoucher: idVoucher,
+            idUser: user._id.toString(),
+            quantity: Number(item.quantity),
+          });
+          addedUsers.push(user?._id.toString()); // Thêm ID người dùng vào mảng
+          break; // Thoát vòng lặp sau khi thêm voucher cho người dùng
         }
       }
-
-      // Tạo voucher cho user với số lượng đã tính toán
-      await MyVoucherModel.create({
-        idVoucher: idVoucher,
-        idUser: user?._id.toString(),
-        quantity: Number(quantity),
-      });
-
-      // Cộng dồn số lượng voucher đã tạo
-      totalQuantity += Number(quantity);
     }
 
+    console.log("🚀 ~ createVoucher ~ addedUsers:", addedUsers);
     return res.status(200).json({
-      message: "Tạo khuyến mãi thành công ",
-      totalQuantity: totalQuantity, // Trả về tổng số lượng voucher đã tạo
-
+      message: "Tạo khuyến mãi thành công",
       datas: data,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "lỗi khi thêm voucher: " + error.message,
+      message: "Lỗi khi thêm voucher: " + error.message,
     });
   }
 };
@@ -128,7 +144,7 @@ export const getDetailVoucher = async (req, res) => {
       });
     }
     const typeVoucher = await TypeVoucherModel.findById(
-      data?._doc?.idTypeVoucher
+      data?._doc?.idTypeVoucher.toString()
     );
 
     return res.status(200).json({
@@ -166,6 +182,7 @@ export const removeVoucher = async (req, res) => {
 
 export const updateVoucher = async (req, res) => {
   try {
+    const dataCu = await Voucher.findById(req.params.id);
     const data = await Voucher.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -174,6 +191,83 @@ export const updateVoucher = async (req, res) => {
         message: "Cập nhật khuyến mại thất bại",
       });
     }
+
+    const idVoucher = data._id;
+    const users: any = await AuthModel.find();
+    const phanPhatVoucherCu = [
+      {
+        minTotalBillCu: dataCu.minTotalBill1,
+        quantityCu: dataCu.quantity1,
+      },
+      {
+        minTotalBillCu: dataCu.minTotalBill2,
+        quantityCu: dataCu.quantity2,
+      },
+      {
+        minTotalBillCu: dataCu.minTotalBill3,
+        quantityCu: dataCu.quantity3,
+      },
+      {
+        minTotalBillCu: dataCu.minTotalBill4,
+        quantityCu: dataCu.quantity4,
+      },
+    ];
+    const phanPhatVoucherMoi = [
+      {
+        minTotalBillMoi: req.body.minTotalBill1,
+        quantityMoi: req.body.quantity1,
+      },
+      {
+        minTotalBillMoi: req.body.minTotalBill2,
+        quantityMoi: req.body.quantity2,
+      },
+      {
+        minTotalBillMoi: req.body.minTotalBill3,
+        quantityMoi: req.body.quantity3,
+      },
+      {
+        minTotalBillMoi: req.body.minTotalBill4,
+        quantityMoi: req.body.quantity4,
+      },
+    ];
+    // Sắp xếp phanPhatVoucher theo thứ tự giảm dần của minTotalBilll
+    const phanPhatVoucherSortMoi = phanPhatVoucherMoi.sort((a, b) => {
+      return parseInt(b.minTotalBillMoi) - parseInt(a.minTotalBillMoi);
+    });
+
+    // Duyệt qua từng người dùng
+    for (const user of users) {
+      const myVoucher = await MyVoucherModel.findOne({
+        idUser: user?._id,
+        idVoucher: idVoucher,
+      });
+
+      if (myVoucher) {
+        for (const itemMoi of phanPhatVoucherSortMoi) {
+          if (Number(user?.totalAmount) >= Number(itemMoi.minTotalBillMoi)) {
+            const voucherphanphat = phanPhatVoucherCu.find(
+              (vc) => vc.minTotalBillCu === itemMoi.minTotalBillMoi
+            );
+
+            if (voucherphanphat) {
+              let quantity =
+                Number(itemMoi.quantityMoi) -
+                Number(voucherphanphat.quantityCu) +
+                Number(myVoucher?.quantity);
+              await MyVoucherModel.findByIdAndUpdate(
+                myVoucher?._id,
+                { quantity: quantity }, // Giá trị cập nhật
+                { new: true } // Tùy chọn để trả về tài liệu sau khi cập nhật
+              );
+              break; // Thoát vòng lặp nếu đã tìm được điều kiện phù hợp
+            }
+          }
+        }
+      }
+
+      // Cộng dồn số lượng voucher đã tạo
+    }
+
     return res.status(200).json({
       message: "Cập nhật khuyến mại thành công",
       datas: data,
