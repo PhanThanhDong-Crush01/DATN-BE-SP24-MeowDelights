@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getTop10ViewProducts,
   thong_ke_doanh_thu,
   thong_ke_doanh_thu_thang_trong_nam,
   thong_ke_top_10_product,
@@ -12,4 +13,5 @@ routerThongKe.get(
   "/thong_ke_doanh_thu_thang_trong_nam/:id",
   thong_ke_doanh_thu_thang_trong_nam
 );
+routerThongKe.get("/getTop10ViewProducts", getTop10ViewProducts);
 export default routerThongKe;
