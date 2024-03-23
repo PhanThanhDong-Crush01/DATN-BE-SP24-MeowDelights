@@ -62,46 +62,6 @@ export const getAllMyVoucherUser = async (req, res) => {
       { totalAmount: totalAmountNew },
       { new: true }
     );
-    const dataVc = await VoucherModel.find();
-    const xemSetLaiDanhSachVoucher = await Promise.all(
-      dataVc.map(async (vc) => {
-        const phanPhatVoucher = [
-          {
-            minTotalBill: vc?._doc?.minTotalBill1,
-            quantity: vc?._doc?.quantity1,
-          },
-          {
-            minTotalBill: vc?._doc?.minTotalBill2,
-            quantity: vc?._doc?.quantity2,
-          },
-          {
-            minTotalBill: vc?._doc?.minTotalBill3,
-            quantity: vc?._doc?.quantity3,
-          },
-          {
-            minTotalBill: vc?._doc?.minTotalBill4,
-            quantity: vc?._doc?.quantity4,
-          },
-        ];
-        // Sắp xếp phanPhatVoucher theo thứ tự giảm dần của minTotalBilll
-        const phanPhatVoucherSort = phanPhatVoucher.sort((a, b) => {
-          return parseInt(b.minTotalBill) - parseInt(a.minTotalBill);
-        });
-
-        for (const item of phanPhatVoucherSort) {
-          if (Number(totalAmountNew) >= Number(item.minTotalBill)) {
-            await MyVoucherModel.findOneAndUpdate(
-              { idVoucher: vc?._doc?._id },
-              {
-                quantity: Number(item.quantity),
-              },
-              { new: true }
-            );
-            break;
-          }
-        }
-      })
-    );
 
     const data = await MyVoucherModel.find({ idUser: idUser });
     if (!data) {
@@ -112,7 +72,7 @@ export const getAllMyVoucherUser = async (req, res) => {
     const myVoucher = await Promise.all(
       data.map(async (item) => {
         const voucher = await VoucherModel.findById(item?._doc?.idVoucher);
-        if (voucher !== null) {
+        if (voucher !== null && voucher?.ExistsInStock != false) {
           return { ...item?._doc, voucher };
         }
       })

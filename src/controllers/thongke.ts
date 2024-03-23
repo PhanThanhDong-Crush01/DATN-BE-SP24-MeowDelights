@@ -77,7 +77,7 @@ export const thong_ke_doanh_thu = async (req, res) => {
 
     // Kiểm tra nếu khoảng cách giữa startDate và endDate lớn hơn 30 ngày
     const diffInDays = moment(endDate).diff(moment(startDate), "days");
-    if (diffInDays > 30) {
+    if (diffInDays > 15) {
       return res.status(400).json({
         message: "Khoảng cách giữa 2 ngày truy vấn không được lớn hơn 30 ngày.",
       });
