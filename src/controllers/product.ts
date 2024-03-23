@@ -371,3 +371,28 @@ export const deletePro = async (req, res: any) => {
     });
   }
 };
+
+export const updateView = async (req: any, res: any) => {
+  try {
+    const product = await ProductModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { $inc: { view: 1 } },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "View count updated successfully",
+      product: product,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};

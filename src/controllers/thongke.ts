@@ -257,3 +257,21 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
     });
   }
 };
+
+export const getTop10ViewProducts = async (req: any, res: any) => {
+  try {
+    // Truy vấn danh sách sản phẩm và sắp xếp theo số lượt xem giảm dần, chỉ lấy 10 sản phẩm đầu tiên
+    const products = await ProductModel.find()
+      .sort({ view: -1 }) // Sắp xếp giảm dần theo số lượt xem
+      .limit(10); // Giới hạn số lượng sản phẩm trả về là 10
+
+    // Trả về danh sách sản phẩm
+    const response: any = {
+      products: products,
+    };
+
+    return res.status(200).json({ response });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
