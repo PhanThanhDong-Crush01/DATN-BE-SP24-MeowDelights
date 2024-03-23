@@ -24,41 +24,6 @@ connect();
 
 app.use("/api", router);
 
-//app.ts
-// import { Twilio } from "twilio";
-
-// // Định nghĩa route API để gửi mã OTP
-// app.post("/api/send-otp/test", async (req, res) => {
-//   try {
-//     const accountSid = "AC1e63bb89ba7a4feb18add388fd93772d";
-//     const authToken = "75436634cf168a117fc3f61774bc82e2";
-//     const verifySid = "VA2e23562f71eb38f4437da89db32dcffa";
-//     const client = new Twilio(accountSid, authToken);
-//     client.verify.v2
-//       .services(verifySid)
-//       .verifications.create({ to: "+840868785365", channel: "sms" })
-//       .then((verification) => console.log(verification.status))
-//       .then(() => {
-//         const readline = require("readline").createInterface({
-//           input: process.stdin,
-//           output: process.stdout,
-//         });
-//         readline.question("Please enter the OTP:", (otpCode) => {
-//           client.verify.v2
-//             .services(verifySid)
-//             .verificationChecks.create({ to: "+840868785365", code: otpCode })
-//             .then((verification_check) =>
-//               console.log(verification_check.status)
-//             )
-//             .then(() => readline.close());
-//         });
-//       });
-//   } catch (error) {
-//     console.error("Failed to send OTP:", error);
-//     return res.status(500).json({ message: "Failed to send OTP." });
-//   }
-// });
-
 app.post("/api/send-otp", async (req, res) => {
   const { otp, phoneNumber } = req.body;
 
