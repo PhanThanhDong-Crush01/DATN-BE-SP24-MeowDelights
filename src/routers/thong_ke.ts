@@ -1,6 +1,15 @@
 import express from "express";
-import { thong_ke } from "../controllers/thongke";
+import {
+  thong_ke_doanh_thu,
+  thong_ke_doanh_thu_thang_trong_nam,
+  thong_ke_top_10_product,
+} from "../controllers/thongke";
 
 const routerThongKe = express.Router();
-routerThongKe.get("/", thong_ke);
+routerThongKe.get("/top10product", thong_ke_top_10_product);
+routerThongKe.post("/thong_ke_doanh_thu", thong_ke_doanh_thu);
+routerThongKe.get(
+  "/thong_ke_doanh_thu_thang_trong_nam/:id",
+  thong_ke_doanh_thu_thang_trong_nam
+);
 export default routerThongKe;
