@@ -1,0 +1,140 @@
+diff --git a/src/controllers/auth.ts b/src/controllers/auth.ts
+index 8828171..2976b4d 100644
+--- a/src/controllers/auth.ts
++++ b/src/controllers/auth.ts
+@@ -198,9 +198,9 @@ export const AuthWithRole = async (req, res) => {
+     const role = req.params.id;
+     let permission = "";
+     if (role == 1) {
+-      permission = "admin";
++      permission = "adminWeb";
+     } else if (role == 2) {
+-      permission = "staff";
++      permission = "adminContact";
+     } else {
+       permission = "member";
+     }
+diff --git a/src/controllers/cart.ts b/src/controllers/cart.ts
+index 4c83345..da705eb 100644
+--- a/src/controllers/cart.ts
++++ b/src/controllers/cart.ts
+@@ -12,30 +12,27 @@ export const create = async (req: any, res: any) => {
+     const quantity = cartItem.quantity;
+     const productOne: any = await ProductModel.findById(idpro);
+     const priceTypePro: any = await TypeProductModel.findById(idprotype);
++    console.log("🚀 ~ create ~ priceTypePro:", priceTypePro);
+     const namePro = productOne.name;
+     const nameTypePro = priceTypePro.color + " - " + priceTypePro.size;
+     const imageTypePro = priceTypePro.image;
+ 
+-    // cheeck số lượng khi thêm vào giỏ hàng
+-    const productInStock = priceTypePro.quantity;
+-    if (quantity > productInStock) {
+-      return res.status(400).json({
+-        message: "Số lượng  vượt quá số lượng có sẵn",
+-      });
+-    }
+-
+     const userCartItem: any = await OrderDetailModel.findOne({
+       iduser: iduser,
+       idpro: idpro,
+       idprotype: idprotype,
+-      quantity: quantity,
+-      money: money,
+-      namePro: namePro,
+-      nameTypePro: nameTypePro,
+-      imageTypePro: imageTypePro,
+     });
+ 
++    // cheeck số lượng khi thêm vào giỏ hàng
++
+     if (userCartItem) {
++      const productInStock = priceTypePro.quantity;
++      if (quantity + userCartItem?.quantity > productInStock) {
++        return res.status(400).json({
++          message: "Số lượng vượt quá số lượng có sẵn",
++        });
++      }
++
+       const upQuantity = quantity + userCartItem.quantity;
+       var upMoney: number;
+ 
+diff --git a/src/controllers/contact.ts b/src/controllers/contact.ts
+index 0d6376b..f8bbc3f 100644
+--- a/src/controllers/contact.ts
++++ b/src/controllers/contact.ts
+@@ -190,3 +190,51 @@ export const setStaffWithContact = async (req, res) => {
+     });
+   }
+ };
++
++export const updateContact_note_idOrder = async (req, res) => {
++  console.log("🚀 ~ constupdateContact_note_idOrder= ~ req:", req.body);
++  try {
++    const id = req.params.id;
++    const dataCt = await ContactModel.findById(id);
++    if (dataCt?.statusOrder == true && dataCt?.note != "") {
++      return res.status(404).json({
++        message: "Cập nhật liên hệ thất bại, liên hệ này đã chốt được đơn!",
++      });
++    }
++    const idOrder = req.body.idOrder;
++    const statusOrder = req.body.status;
++    if (idOrder !== "") {
++      const bill = await BillModel.findById(idOrder);
++      if (!bill) {
++        return res.status(404).json({
++          message: "Cập nhật liên hệ thất bại, đơn hàng không tồn tại!",
++        });
++      }
++    } else {
++    }
++    const note = req.body.note;
++    const data = await ContactModel.findByIdAndUpdate(
++      id,
++      {
++        idOrder: idOrder !== "" ? idOrder : undefined,
++        note: note,
++        statusOrder: statusOrder,
++      },
++      { new: true }
++    );
++    if (!data) {
++      return res.status(404).json({
++        message: "Cập nhật liên hệ thất bại!",
++      });
++    }
++    ///fygkyihhgj,hjmghgj
++    return res.status(200).json({
++      message: "Cập nhật liên hệ thành công!",
++      datas: data,
++    });
++  } catch (error) {
++    return res.status(500).json({
++      message: error.message,
++    });
++  }
++};
+diff --git a/src/routers/contact.ts b/src/routers/contact.ts
+index bb846e4..ae6d991 100644
+--- a/src/routers/contact.ts
++++ b/src/routers/contact.ts
+@@ -6,6 +6,7 @@ import {
+   remoteContact,
+   setStaffWithContact,
+   updateContact,
++  updateContact_note_idOrder,
+ } from "../controllers/contact";
+ 
+ const routerContact = Router();
+@@ -14,6 +15,10 @@ routerContact.get("/:id", getOneContact);
+ routerContact.post("/", createContact);
+ routerContact.patch("/:id", updateContact);
+ routerContact.patch("/:id/staff", setStaffWithContact);
++routerContact.patch(
++  "/:id/updateContact_note_idOrder",
++  updateContact_note_idOrder
++);
+ routerContact.delete("/:id", remoteContact);
+ 
+ export default routerContact;
