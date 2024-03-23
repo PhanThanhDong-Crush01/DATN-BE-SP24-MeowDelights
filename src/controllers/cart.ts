@@ -7,9 +7,6 @@ export const create = async (req: any, res: any) => {
     const cartItem = req.body;
     const iduser = cartItem.iduser;
     const idpro = cartItem.idpro;
-    const namePro = cartItem.namePro;
-    const nameTypePro = cartItem.nameTypePro;
-    const imageTypePro = cartItem.imageTypePro;
     const idprotype = cartItem.idprotype;
     const money = cartItem.money;
     const quantity = cartItem.quantity;
