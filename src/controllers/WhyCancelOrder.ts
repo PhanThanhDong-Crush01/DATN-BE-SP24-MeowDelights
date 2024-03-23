@@ -57,8 +57,7 @@ export const WhyCancelOrder = async (req, res) => {
       bill.orderstatus !== "Đang chuẩn bị hàng"
     ) {
       return res.status(400).json({
-        message:
-          "Không thể hủy đơn hàng ở trạng thái hiện tại, tải lại trang để xác nhận!",
+        message: "Không thể hủy đơn hàng ở trạng thái này.",
       });
     }
     // Tạo mới đối tượng comment

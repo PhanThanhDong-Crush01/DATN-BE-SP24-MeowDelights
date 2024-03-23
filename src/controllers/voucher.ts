@@ -136,9 +136,7 @@ export const getAllVoucher = async (req, res) => {
 };
 export const getDetailVoucher = async (req, res) => {
   try {
-    const id = req.params.id.trim();
-    const data = await Voucher.findById(id);
-    console.log("🚀 ~ getDetailVoucher ~ data:", data);
+    const data = await Voucher.findById(req.params.id);
     // console.log(data);
     if (!data) {
       return res.status(404).json({

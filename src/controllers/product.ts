@@ -1,5 +1,6 @@
 import { OrderDetailModel } from "../models/bill";
 import CategoryModel from "../models/category";
+import CommentModel from "../models/comment";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import { productSchema } from "./../validation/product";
@@ -214,6 +215,17 @@ export const getAll = async (req: any, res: any) => {
               },
             },
           ]);
+          const comments = await CommentModel.find({ productId: itemPro._id });
+
+          // Tính tổng số sao của các bình luận
+          const totalStars = comments.reduce(
+            (total, comment) => total + comment.star,
+            0
+          );
+
+          // Tính trung bình số sao
+          const averageStars =
+            comments.length > 0 ? totalStars / comments.length : 0;
 
           // Nếu có dữ liệu về số lượng sản phẩm đã bán, gán cho thuộc tính soldQuantity, soldAmount
           const soldQuantity = soldData.length > 0 ? soldData[0].totalSold : 0;
@@ -233,6 +245,7 @@ export const getAll = async (req: any, res: any) => {
           const sizes = Array.from(
             new Set(typeProducts.map((product: any) => product.size))
           );
+
           const averagePrice = Math.floor(
             prices.reduce(
               (total: number, current: number) => total + current,
@@ -250,6 +263,7 @@ export const getAll = async (req: any, res: any) => {
             averagePrice,
             colors,
             sizes,
+            averageStars,
             categoryName: category ? category._doc.name : null,
             soldQuantity, // Thêm thuộc tính soldQuantity vào đối tượng sản phẩm
             soldAmount, // Thêm thuộc tính soldAmount vào đối tượng sản phẩm
