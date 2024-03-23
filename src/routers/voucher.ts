@@ -3,6 +3,7 @@ import {
   createVoucher,
   getAllVoucher,
   getDetailVoucher,
+  phanPhatVouher,
   removeVoucher,
   updateVoucher,
 } from "../controllers/voucher";
@@ -14,4 +15,5 @@ router.get("/:id", getDetailVoucher);
 router.post("/", createVoucher);
 router.patch("/:id", updateVoucher);
 router.delete("/:id", removeVoucher);
+router.post("/phanPhatVouher", phanPhatVouher);
 export default router;

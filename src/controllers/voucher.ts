@@ -7,9 +7,7 @@ import Voucher from "../models/voucher";
 export const createVoucher = async (req, res) => {
   try {
     const voucher = req.body;
-    console.log("🚀 ~ createVoucher ~ voucher:", voucher);
     const data = await Voucher.create(voucher);
-    console.log("🚀 ~ createVoucher ~ data:", data);
     if (!data) {
       return res.status(404).json({
         message: "Tạo khuyến mãi thất bại",
@@ -64,7 +62,6 @@ export const createVoucher = async (req, res) => {
       }
     }
 
-    console.log("🚀 ~ createVoucher ~ addedUsers:", addedUsers);
     return res.status(200).json({
       message: "Tạo khuyến mãi thành công",
       datas: data,
@@ -136,7 +133,9 @@ export const getAllVoucher = async (req, res) => {
 };
 export const getDetailVoucher = async (req, res) => {
   try {
-    const data = await Voucher.findById(req.params.id);
+    const id = req.params.id.trim();
+    const data = await Voucher.findById(id);
+    console.log("🚀 ~ getDetailVoucher ~ data:", data);
     // console.log(data);
     if (!data) {
       return res.status(404).json({
@@ -304,5 +303,68 @@ export const decreaseVoucherQuantity = async (voucherId) => {
       success: false,
       message: "Lỗi khi giảm số lượng voucher: " + error.message,
     };
+  }
+};
+
+export const phanPhatVouher = async (req, res) => {
+  try {
+    let countVouchersDistributed = 0; // Thêm biến đếm
+    const idVouchers = req.body.idVouchers;
+    const dataCu = await Voucher.findById(req.params.id);
+    const users = await AuthModel.find();
+    for (const vc of idVouchers) {
+      const dataVc = await Voucher.findById(vc);
+      const phanPhatVoucher = [
+        {
+          minTotalBill: dataVc.minTotalBill1,
+          quantity: dataVc.quantity1,
+        },
+        {
+          minTotalBill: dataVc.minTotalBill2,
+          quantity: dataVc.quantity2,
+        },
+        {
+          minTotalBill: dataVc.minTotalBill3,
+          quantity: dataVc.quantity3,
+        },
+        {
+          minTotalBill: dataVc.minTotalBill4,
+          quantity: dataVc.quantity4,
+        },
+      ];
+      // Sắp xếp phanPhatVoucher theo thứ tự giảm dần của minTotalBill
+      const phanPhatVoucherSort = phanPhatVoucher.sort((a, b) => {
+        return parseInt(b.minTotalBill) - parseInt(a.minTotalBill);
+      });
+
+      for (const user of users) {
+        const myVoucher = await MyVoucherModel.findOne({
+          idUser: user?._id,
+          idVoucher: vc,
+        });
+
+        if (myVoucher) {
+          for (const itemMoi of phanPhatVoucherSort) {
+            if (Number(user?.totalAmount) >= Number(itemMoi.minTotalBill)) {
+              await MyVoucherModel.findByIdAndUpdate(
+                myVoucher?._id,
+                { quantity: itemMoi.quantity },
+                { new: true }
+              );
+              countVouchersDistributed += itemMoi.quantity; // Tăng biến đếm
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return res.status(200).json({
+      message: `Phân phát voucher cho người dùng thành công, đã phân phát ${countVouchersDistributed} lượt dùng voucher cho người dùng`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };

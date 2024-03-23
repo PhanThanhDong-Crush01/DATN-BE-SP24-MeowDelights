@@ -6,6 +6,7 @@ import {
   restore,
   storage,
   update,
+  updateView,
 } from "../controllers/product";
 // import { authorization, } from "../middlewares/authorization";
 // import { authenticate } from "../middlewares/authenticate";
@@ -17,5 +18,6 @@ router.post("/", create);
 router.patch("/restore/:id", restore);
 router.patch("/:id/update", update);
 router.patch("/storage/:id/", storage);
+router.get("/updateView/:id/", updateView);
 
 export default router;

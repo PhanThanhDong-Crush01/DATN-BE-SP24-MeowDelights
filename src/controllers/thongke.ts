@@ -77,9 +77,9 @@ export const thong_ke_doanh_thu = async (req, res) => {
 
     // Kiểm tra nếu khoảng cách giữa startDate và endDate lớn hơn 30 ngày
     const diffInDays = moment(endDate).diff(moment(startDate), "days");
-    if (diffInDays > 30) {
+    if (diffInDays > 15) {
       return res.status(400).json({
-        message: "Khoảng cách giữa 2 ngày truy vấn không được lớn hơn 30 ngày.",
+        message: "Khoảng cách giữa 2 ngày truy vấn không được lớn hơn 15 ngày.",
       });
     }
 
@@ -255,5 +255,23 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
     return res.status(500).json({
       message: "Lỗi khi thực hiện thống kê: " + error.message,
     });
+  }
+};
+
+export const getTop10ViewProducts = async (req: any, res: any) => {
+  try {
+    // Truy vấn danh sách sản phẩm và sắp xếp theo số lượt xem giảm dần, chỉ lấy 10 sản phẩm đầu tiên
+    const products = await ProductModel.find()
+      .sort({ view: -1 }) // Sắp xếp giảm dần theo số lượt xem
+      .limit(10); // Giới hạn số lượng sản phẩm trả về là 10
+
+    // Trả về danh sách sản phẩm
+    const response: any = {
+      products: products,
+    };
+
+    return res.status(200).json({ response });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
