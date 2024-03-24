@@ -8,6 +8,6 @@ const contactSchema = Joi.object({
   idNV: Joi.string(),
   statusOrder: Joi.boolean(),
   idOrder: Joi.string(),
-  note: Joi.string().required().min(6).max(50),
+  note: Joi.string(),
 });
 export default contactSchema;

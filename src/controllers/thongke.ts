@@ -1,6 +1,59 @@
+import AuthModel from "../models/auth";
 import BillModel, { OrderDetailModel } from "../models/bill";
 import CategoryModel from "../models/category";
 import ProductModel from "../models/product";
+import moment from "moment";
+
+export const thong_ke_top10_user = async (req, res) => {
+  try {
+    const users = await AuthModel.find({ ExistsInStock: true });
+    if (users.length === 0) {
+      return res.status(404).json({
+        message: "Không có tài khoản nào",
+      });
+    }
+
+    const usersWithStats = await Promise.all(
+      users.map(async (user) => {
+        // Lấy danh sách hóa đơn của người dùng
+        const userBills = await BillModel.find({
+          iduser: user._id,
+        });
+
+        // Tính tổng số hóa đơn
+        const totalBillCount = userBills.length;
+
+        // Tính tổng tiền đã mua
+        const totalAmount = userBills.reduce(
+          (acc, bill) => acc + bill.money,
+          0
+        );
+
+        // Trả về thông tin người dùng kèm theo số hóa đơn, tổng tiền đã mua, và tổng số sản phẩm đã mua
+        return {
+          _id: user._id,
+          username: user.name,
+          email: user.email,
+          phone: user.phone,
+          totalBillCount: totalBillCount,
+          totalAmount: totalAmount,
+        };
+      })
+    );
+
+    // Sắp xếp danh sách người dùng theo tổng tiền đã mua và lấy top 10
+    const top10Users = usersWithStats
+      .sort((a, b) => b?.totalAmount - a?.totalAmount)
+      .slice(0, 10);
+
+    return res.status(200).json({ data: top10Users });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi khi thực hiện thống kê: " + error.message,
+    });
+  }
+};
 
 // Hàm thống kê 10 sản phẩm bán được nhiều tiền nhất
 export const thong_ke_top_10_product = async (req, res) => {
@@ -17,12 +70,13 @@ export const thong_ke_top_10_product = async (req, res) => {
 
 // Hàm lấy danh sách 10 sản phẩm bán được nhiều tiền nhất
 const getTopSellingProducts = async () => {
-  // Sử dụng aggregation framework của Mongoose để thống kê tổng doanh thu của từng sản phẩm
+  // Sử dụng aggregation framework của Mongoose để thống kê tổng doanh thu và số lượng của từng sản phẩm
   const topSellingProducts = await OrderDetailModel.aggregate([
     {
       $group: {
         _id: "$idpro",
         totalRevenue: { $sum: "$money" },
+        totalQuantity: { $sum: "$quantity" }, // Thêm tổng số lượng của mỗi sản phẩm
       },
     },
     {
@@ -42,14 +96,13 @@ const getTopSellingProducts = async () => {
         name: productDetail.name,
         status: productDetail.status,
         totalRevenue: product.totalRevenue,
+        totalQuantity: product.totalQuantity, // Thêm số lượng vào kết quả trả về
       };
     })
   );
 
   return topProductsDetails;
 };
-
-import moment from "moment";
 
 export const thong_ke_doanh_thu = async (req, res) => {
   try {
@@ -186,6 +239,8 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
     const endDate = moment(currentDate).endOf("year"); // Lấy ngày cuối cùng của năm
 
     const revenueData = {};
+    const bangtongke = [["Category", "Tổng tiền"]]; // Khởi tạo bảng tổng kê
+    let totalRevenueOfYear = 0; // Khởi tạo tổng doanh thu của cả năm
 
     // Lặp qua từng tháng trong năm
     for (
@@ -211,6 +266,7 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
         // Lặp qua các đơn hàng của tháng để tính tổng doanh thu và thông tin về danh mục
         for (const order of monthlyOrders) {
           totalRevenue += order.money;
+          totalRevenueOfYear += order.money; // Cập nhật tổng doanh thu của cả năm
 
           // Lấy thông tin sản phẩm từ OrderDetailModel
           const productInfoOrderDetail: any = await ProductModel.findById(
@@ -241,6 +297,9 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
           name: category.name,
           totalRevenue: categoryInfo[category._id.toString()],
         };
+
+        // Thêm thông tin tổng tiền mỗi danh mục vào bảng tổng kê
+        bangtongke.push([category.name, categoryInfo[category._id.toString()]]);
       });
 
       // Lưu tổng doanh thu của tháng và thông tin về danh mục vào đối tượng revenueData
@@ -250,7 +309,9 @@ export const thong_ke_doanh_thu_thang_trong_nam = async (req, res) => {
       };
     }
 
-    return res.status(200).json({ revenueData });
+    return res
+      .status(200)
+      .json({ revenueData, bangtongke, totalRevenueOfYear });
   } catch (error) {
     return res.status(500).json({
       message: "Lỗi khi thực hiện thống kê: " + error.message,

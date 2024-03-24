@@ -16,24 +16,26 @@ export const create = async (req: any, res: any) => {
     const nameTypePro = priceTypePro.color + " - " + priceTypePro.size;
     const imageTypePro = priceTypePro.image;
 
-    // cheeck số lượng khi thêm vào giỏ hàng
-    const productInStock = priceTypePro.quantity;
-    if (quantity > productInStock) {
-      return res.status(400).json({
-        message: "Số lượng  vượt quá số lượng có sẵn",
-      });
-    }
-
     const userCartItem: any = await OrderDetailModel.findOne({
       iduser: iduser,
       idpro: idpro,
       idprotype: idprotype,
-      quantity: quantity,
-      money: money,
-      namePro: namePro,
-      nameTypePro: nameTypePro,
-      imageTypePro: imageTypePro,
     });
+
+    // cheeck số lượng khi thêm vào giỏ hàng
+    const productInStock = priceTypePro.quantity;
+    if (quantity <= 0) {
+      return res.status(400).json({
+        message: "Số lượng phải lớn hơn 0",
+      });
+    } else if (
+      quantity > productInStock ||
+      quantity + userCartItem?.quantity > productInStock
+    ) {
+      return res.status(400).json({
+        message: "Số lượng  vượt quá số lượng có sẵn",
+      });
+    }
 
     if (userCartItem) {
       const upQuantity = quantity + userCartItem.quantity;
