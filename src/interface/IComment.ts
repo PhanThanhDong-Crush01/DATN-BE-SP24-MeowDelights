@@ -1,5 +1,6 @@
 export interface IComment {
   _id?: string;
+  billId: string;
   productId: string;
   productTypeId: string;
   userId: string;
