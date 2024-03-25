@@ -73,9 +73,6 @@ const authSchema = new mongoose.Schema(
     gender: {
       type: Boolean,
     },
-    age: {
-      type: Number,
-    },
     address: {
       type: String,
     },

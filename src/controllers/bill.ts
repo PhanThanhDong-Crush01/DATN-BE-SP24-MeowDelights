@@ -242,6 +242,16 @@ export const getBillOfUser = async (req, res) => {
           orderstatus: item.orderstatus,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
+
+          voucher: "",
+          // user: {
+          //   name: user._doc.name,
+          //   email: user._doc.email,
+          // },
+          // products: products,
+
+          ...item?._doc,
+          // totalQuantity: totalQuantity,
           billDetails,
         };
       })

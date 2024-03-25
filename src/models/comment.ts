@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema<any>(
   {
+    billId: {
+      type: String,
+      required: true,
+    },
     productId: {
       type: String,
       required: true,
