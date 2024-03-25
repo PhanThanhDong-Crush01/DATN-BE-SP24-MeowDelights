@@ -81,7 +81,7 @@ export const createContact = async (req, res) => {
     });
     if (error) {
       const errors = error.details.map((err) => err.message);
-      return res.status(400).json({
+      return res.status(500).json({
         message: errors,
       });
     }
@@ -183,6 +183,54 @@ export const setStaffWithContact = async (req, res) => {
     return res.status(200).json({
       message: "Giao liên hệ cho Nhân viên thành công!",
       datas: contactData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const updateContact_note_idOrder = async (req, res) => {
+  console.log("🚀 ~ constupdateContact_note_idOrder= ~ req:", req.body);
+  try {
+    const id = req.params.id;
+    const dataCt = await ContactModel.findById(id);
+    if (dataCt?.statusOrder == true && dataCt?.note != "") {
+      return res.status(404).json({
+        message: "Cập nhật liên hệ thất bại, liên hệ này đã chốt được đơn!",
+      });
+    }
+    const idOrder = req.body.idOrder;
+    const statusOrder = req.body.status;
+    if (idOrder !== "") {
+      const bill = await BillModel.findById(idOrder);
+      if (!bill) {
+        return res.status(404).json({
+          message: "Cập nhật liên hệ thất bại, đơn hàng không tồn tại!",
+        });
+      }
+    } else {
+    }
+    const note = req.body.note;
+    const data = await ContactModel.findByIdAndUpdate(
+      id,
+      {
+        idOrder: idOrder !== "" ? idOrder : undefined,
+        note: note,
+        statusOrder: statusOrder,
+      },
+      { new: true }
+    );
+    if (!data) {
+      return res.status(404).json({
+        message: "Cập nhật liên hệ thất bại!",
+      });
+    }
+    ///fygkyihhgj,hjmghgj
+    return res.status(200).json({
+      message: "Cập nhật liên hệ thành công!",
+      datas: data,
     });
   } catch (error) {
     return res.status(500).json({

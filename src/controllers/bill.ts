@@ -12,6 +12,14 @@ import { decreaseVoucherQuantity } from "./voucher";
 // xong bill
 export const createBill = async (req: any, res: any) => {
   try {
+    if (req.body.bill.idvc != "") {
+      const voucher: any = await VoucherModel.findById(req.body.bill.idvc);
+      if (voucher?.quantity === 0) {
+        return res.status(500).json({
+          message: "Áp dụng voucher không thành công!!!",
+        });
+      }
+    }
     const bill = await BillModel.create(req.body.bill);
     if (!bill) {
       return res.json({
@@ -234,16 +242,6 @@ export const getBillOfUser = async (req, res) => {
           orderstatus: item.orderstatus,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
-
-          voucher: "",
-          user: {
-            name: user._doc.name,
-            email: user._doc.email,
-          },
-          products: products,
-
-          ...item?._doc,
-          totalQuantity: totalQuantity,
           billDetails,
         };
       })
