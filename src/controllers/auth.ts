@@ -6,7 +6,6 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import AuthModel from "../models/auth";
 import BillModel, { OrderDetailModel } from "../models/bill";
-import mongoose from "mongoose";
 import VoucherModel from "../models/voucher";
 import MyVoucherModel from "../models/myVoucher";
 // // xong auth
