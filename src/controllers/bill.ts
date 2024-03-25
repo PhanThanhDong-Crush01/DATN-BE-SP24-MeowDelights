@@ -12,6 +12,14 @@ import { decreaseVoucherQuantity } from "./voucher";
 // xong bill
 export const createBill = async (req: any, res: any) => {
   try {
+    if (req.body.bill.idvc != "") {
+      const voucher: any = await VoucherModel.findById(req.body.bill.idvc);
+      if (voucher?.quantity === 0) {
+        return res.status(500).json({
+          message: "Áp dụng voucher không thành công!!!",
+        });
+      }
+    }
     const bill = await BillModel.create(req.body.bill);
     if (!bill) {
       return res.json({

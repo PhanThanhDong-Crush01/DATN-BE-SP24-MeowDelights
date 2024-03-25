@@ -38,6 +38,13 @@ export const create = async (req: any, res: any) => {
     }
 
     if (userCartItem) {
+      const productInStock = priceTypePro.quantity;
+      if (quantity + userCartItem?.quantity > productInStock) {
+        return res.status(400).json({
+          message: "Số lượng vượt quá số lượng có sẵn",
+        });
+      }
+
       const upQuantity = quantity + userCartItem.quantity;
       var upMoney: number;
 

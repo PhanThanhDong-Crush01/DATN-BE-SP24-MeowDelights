@@ -197,9 +197,9 @@ export const AuthWithRole = async (req, res) => {
     const role = req.params.id;
     let permission = "";
     if (role == 1) {
-      permission = "admin";
+      permission = "adminWeb";
     } else if (role == 2) {
-      permission = "staff";
+      permission = "adminContact";
     } else {
       permission = "member";
     }
