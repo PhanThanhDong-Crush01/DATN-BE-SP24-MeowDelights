@@ -15,7 +15,8 @@ export const createComment = async (req, res) => {
       });
     }
     // Trích xuất dữ liệu từ req.body
-    const { userId, productId, productTypeId, ...commentData } = req.body;
+    const { userId, productId, productTypeId, billId, ...commentData } =
+      req.body;
 
     // Kiểm tra tính hợp lệ của userId và productTypeId
     if (!userId || !productId || !productTypeId) {
@@ -27,11 +28,19 @@ export const createComment = async (req, res) => {
     // Kiểm tra tính hợp lệ của userId và productTypeId so với cơ sở dữ liệu,
     // ví dụ: kiểm tra xem userId có tồn tại không.
 
+    const existingComment = await Comment.findOne({ billId });
+
+    if (existingComment) {
+      return res.status(400).json({
+        message: "Đã tồn tại đánh giá cho idBill này.",
+      });
+    }
     // Tạo mới đối tượng comment
     const data = await Comment.create({
       ...commentData,
       userId,
       productId,
+      billId,
       productTypeId,
       ExistsInStock: true,
     });
@@ -123,9 +132,9 @@ export const getAllComment = async (req, res) => {
 // };
 export const removeComment = async (req, res) => {
   try {
-    const data = await Comment.findByIdAndUpdate(
+    const data = await Comment.findByIdAndDelete(
       req.params.id,
-      { ExistsInStock: false },
+      // { ExistsInStock: false },
       { new: true }
     );
     if (!data) {
