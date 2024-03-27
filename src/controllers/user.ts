@@ -41,22 +41,39 @@ export const updateUserProfile = async (req, res) => {
 };
 export const updateUserRole = async (req, res) => {
   try {
-    const datas = await AuthModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!datas) {
+    const userData = await AuthModel.findById(req.params.id);
+    console.log(userData);
+
+    if (!userData) {
       return res.status(404).json({
-        mes: "Cập nhật thất bại quyền tài khoản",
+        message: "Người dùng không tồn tại",
       });
     }
 
+    // Kiểm tra xem người dùng có đầy đủ các trường cần thiết không
+    const { imgUser, address, gender, phone } = userData;
+    if (!imgUser || !address || !gender || !phone) {
+      return res.status(500).json({
+        message: "Tài khoản không đầy đủ thông tin cơ bản",
+      });
+    }
+    const datas = await AuthModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    if (!datas) {
+      return res.status(404).json({
+        message: "Cập nhật thất bại quyền tài khoản",
+      });
+    }
+    // await setEmployeeCode(req, res);
     return res.status(200).json({
       mes: "Cập nhật thành công quyền tài khoản ",
       data: datas,
     });
   } catch (error) {
     return res.status(500).json({
-      datas: error.mes,
+      datas: error.message,
     });
   }
 };

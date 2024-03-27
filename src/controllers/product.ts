@@ -222,6 +222,7 @@ export const getAll = async (req: any, res: any) => {
             (total, comment) => total + comment.star,
             0
           );
+          const totalComment = comments.length;
 
           // Tính trung bình số sao
           const averageStars =
@@ -263,6 +264,7 @@ export const getAll = async (req: any, res: any) => {
             averagePrice,
             colors,
             sizes,
+            totalComment,
             averageStars,
             categoryName: category ? category._doc.name : null,
             soldQuantity, // Thêm thuộc tính soldQuantity vào đối tượng sản phẩm
@@ -371,7 +373,97 @@ export const deletePro = async (req, res: any) => {
     });
   }
 };
+export const getProductDialog = async function (req, res) {
+  try {
+    const productId = req.params.id;
+    const products = req.body;
 
+    // Lấy thông tin sản phẩm
+    const product: any = await ProductModel.findById(productId, products, {
+      ExistsInStock: true,
+    });
+    if (!product) {
+      return res.json({
+        message: "Không có sản phẩm nào",
+      });
+    }
+
+    // Lấy các loại sản phẩm của sản phẩm này
+    const typeProductData: any = await TypeProductModel.find();
+    const typeProducts: any = typeProductData.filter(
+      (item: any) => item._doc.idPro == productId
+    );
+
+    // Tính toán giá và số lượng từ loại sản phẩm
+    const minPrice = Math.min(...typeProducts.map((type) => type.price));
+    const maxPrice = Math.max(...typeProducts.map((type) => type.price));
+
+    let totalQuantity = 0;
+    typeProducts.forEach((item: any) => {
+      totalQuantity += item.quantity;
+    });
+
+    // Tạo một mảng để lưu thông tin của từng loại sản phẩm
+    const typeProductInfo: any = [];
+    // Duyệt qua từng loại sản phẩm
+    for (const typeProduct of typeProducts) {
+      // Tính tổng số lượng đã bán của loại sản phẩm hiện tại
+      const soldQuantity = await OrderDetailModel.aggregate([
+        {
+          $match: { idprotype: typeProduct._doc._id.toString() }, // Lọc theo id loại sản phẩm
+        },
+        {
+          $group: {
+            _id: null,
+            totalSold: { $sum: "$quantity" }, // Tính tổng số lượng đã bán
+          },
+        },
+      ]);
+
+      // Tính tổng số tiền đã bán của loại sản phẩm hiện tại
+      const soldAmount = await OrderDetailModel.aggregate([
+        {
+          $match: { idprotype: typeProduct._doc._id.toString() }, // Lọc theo id loại sản phẩm
+        },
+        {
+          $group: {
+            _id: null,
+            totalAmount: { $sum: "$money" }, // Tính tổng số tiền đã bán
+          },
+        },
+      ]);
+
+      if (soldQuantity.length > 0) {
+        // Đưa thông tin của loại sản phẩm vào mảng
+        typeProductInfo.push({
+          typeProductId: typeProduct._id,
+          color: typeProduct.color,
+          size: typeProduct.size,
+          quantity: typeProduct.quantity,
+          image: typeProduct.image,
+          weight: typeProduct.weight,
+          price: typeProduct.price,
+          soldQuantity: soldQuantity.length > 0 ? soldQuantity[0].totalSold : 0,
+          soldAmount: soldAmount.length > 0 ? soldAmount[0].totalAmount : 0,
+        });
+      }
+    }
+
+    return res.json({
+      message: "Tìm sản phẩm thành công",
+      data: product,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      totalQuantity: totalQuantity,
+      typeProduct: typeProducts,
+      typeProduct_bill: typeProductInfo,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
 export const updateView = async (req: any, res: any) => {
   try {
     const product = await ProductModel.findOneAndUpdate(

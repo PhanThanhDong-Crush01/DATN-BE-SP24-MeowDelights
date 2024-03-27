@@ -6,7 +6,6 @@ import { signinSchema, signupSchema } from "../validation/auth";
 import auth from "../models/auth";
 import AuthModel from "../models/auth";
 import BillModel, { OrderDetailModel } from "../models/bill";
-import mongoose from "mongoose";
 import VoucherModel from "../models/voucher";
 import MyVoucherModel from "../models/myVoucher";
 // // xong auth
@@ -40,7 +39,7 @@ export const getAllUser = async (req, res) => {
           email: user.email,
           role: user.role,
           address: user.address,
-          age: user.age,
+          // age: user.age,
           gender: user.gender,
           imgUser: user.imgUser,
           phone: user.phone,
@@ -49,6 +48,7 @@ export const getAllUser = async (req, res) => {
           discount_points: user.discount_points,
           totalBillCount: totalBillCount,
           totalAmount: totalAmountNew,
+          ExistsInStock: true,
         };
       })
     );
@@ -169,6 +169,11 @@ export const signin = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         message: "Tài khoản không tồn tại",
+      });
+    }
+    if (!user.ExistsInStock) {
+      return res.status(400).json({
+        message: "Tài khoản đã bị xóa",
       });
     }
     // nó vừa mã hóa và vừa so sánh
@@ -359,13 +364,12 @@ export const editAuth = async (req, res) => {
     const {
       name,
       email,
-      password,
-      age,
+
       phone,
-      role,
+
       address,
       employee,
-      jobPosition,
+
       imgUser,
       gender,
       ExistsInStock,
@@ -383,19 +387,23 @@ export const editAuth = async (req, res) => {
     // Cập nhật thông tin người dùng
     if (name) user.name = name;
     if (email) user.email = email;
-    if (password) {
-      // Mã hóa mật khẩu mới nếu có
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user.password = hashedPassword;
-    }
-    if (age) user.age = age;
+    // if (password) {
+    //   // Mã hóa mật khẩu mới nếu có
+    //   const hashedPassword = await bcrypt.hash(password, 10);
+    //   user.password = hashedPassword;
+    // }
+    // if (age) user.age = age;
     if (address) user.address = address;
-    if (jobPosition) user.jobPosition = jobPosition;
+    // if (jobPosition) user.jobPosition = jobPosition;
     if (imgUser) user.imgUser = imgUser;
     if (gender) user.gender = gender;
-    if (role) user.role = role;
+    // if (role) user.role = role;
     if (phone) user.phone = phone;
-    if (employee) user.employee = employee;
+
+    if (employee) {
+      // Cập nhật mã nhân viên nếu được cung cấp
+      user.employee = employee;
+    }
     if (ExistsInStock) user.ExistsInStock = ExistsInStock;
 
     // Lưu thông tin người dùng đã chỉnh sửa
