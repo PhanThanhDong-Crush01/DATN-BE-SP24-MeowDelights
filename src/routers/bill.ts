@@ -8,6 +8,7 @@ import {
   CancelOrder,
   Change_OrderStatus,
   Change_PaymentStatus,
+  checkCan3Order,
   createBill,
   dailyRevenueAndCategorySales,
   getAllBill,
@@ -34,6 +35,7 @@ router.get("/", getAllBill);
 router.get("/revenue", dailyRevenueAndCategorySales);
 // router.get("/revenue", revenue);
 router.get("/:id", getOneBill);
+router.get("/user/:id/checkCan3Order", checkCan3Order);
 router.delete("/:id", removeBill);
 router.get("/user/:id", getBillOfUser);
 router.get("/whyCanCelOrder/:id", getOneWhyCancelOrder);

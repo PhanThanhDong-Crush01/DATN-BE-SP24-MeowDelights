@@ -4,6 +4,7 @@ import ChangeBillHistoryModel from "../models/changeBillHistory";
 import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import whyCancelOrderSchema from "../validation/whycancenorder";
+import { checkCan3Order } from "./bill";
 // xong whyorder
 // tạo lí do
 const increaseProductQuantity = async (idprotype, quantity) => {
@@ -93,12 +94,16 @@ export const WhyCancelOrder = async (req, res) => {
       const { idprotype, quantity } = billDetail;
       await increaseProductQuantity(idprotype, quantity);
     }
+
+    const cancelledOrdersCount = await checkCan3Order(iduser);
+
     // Trả về phản hồi thành công
     return res.status(200).json({
       message: "Tạo lí do hủy đơn hàng thành công.",
       billDetails,
       data,
       changeOrder,
+      cancelledOrdersCount,
     });
   } catch (error) {
     // Xử lý các loại lỗi khác nhau

@@ -45,6 +45,7 @@ export const getAllUser = async (req, res) => {
           phone: user.phone,
           employee: user.employee,
           jobPosition: user.jobPosition,
+          isLocked: user.isLocked,
           discount_points: user.discount_points,
           totalBillCount: totalBillCount,
           totalAmount: totalAmountNew,

@@ -95,6 +95,13 @@ const authSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isLocked: {
+      type: Boolean,
+      default: true,
+    },
+    dateIsLockedTrue: {
+      type: String,
+    },
   },
   { timestamps: true, versionKey: false }
 );
