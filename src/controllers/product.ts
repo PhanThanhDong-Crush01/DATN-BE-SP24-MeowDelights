@@ -222,6 +222,7 @@ export const getAll = async (req: any, res: any) => {
             (total, comment) => total + comment.star,
             0
           );
+          const totalComment = comments.length;
 
           // Tính trung bình số sao
           const averageStars =
@@ -263,6 +264,7 @@ export const getAll = async (req: any, res: any) => {
             averagePrice,
             colors,
             sizes,
+            totalComment,
             averageStars,
             categoryName: category ? category._doc.name : null,
             soldQuantity, // Thêm thuộc tính soldQuantity vào đối tượng sản phẩm
