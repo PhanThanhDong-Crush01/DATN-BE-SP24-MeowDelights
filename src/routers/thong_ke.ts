@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getTop10ViewProducts,
+  thong_ke,
   thong_ke_doanh_thu,
   thong_ke_doanh_thu_thang_trong_nam,
   thong_ke_top10_user,
@@ -8,6 +9,7 @@ import {
 } from "../controllers/thongke";
 
 const routerThongKe = express.Router();
+routerThongKe.post("/thong_ke", thong_ke);
 routerThongKe.get("/thong_ke_top10_user", thong_ke_top10_user);
 routerThongKe.get("/top10product", thong_ke_top_10_product);
 routerThongKe.post("/thong_ke_doanh_thu", thong_ke_doanh_thu);
