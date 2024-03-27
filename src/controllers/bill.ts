@@ -7,6 +7,7 @@ import ProductModel from "../models/product";
 import TypeProductModel from "../models/typeProduct";
 import VoucherModel from "../models/voucher";
 import { addBillDetail } from "./billDetail";
+import moment from "moment"; // Import thư viện moment để làm việc với thời gian
 
 import { decreaseVoucherQuantity } from "./voucher";
 // xong bill
@@ -380,6 +381,7 @@ const increaseProductQuantity = async (idprotype, quantity) => {
   }
 };
 
+//nv huy hang
 export const CancelOrder = async (req, res) => {
   try {
     const idBill = req.params.id;
@@ -629,4 +631,30 @@ export const removeBill = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+export const checkCan3Order = async (id) => {
+  try {
+    const userId = id;
+    const AllBillUser = await BillModel.find({ iduser: userId });
+    // Lọc các đơn hàng có trạng thái 'Đã hủy hàng' trong 30 ngày trước tính từ ngày hiện tại
+    const thirtyDaysAgo = moment().subtract(30, "days");
+    const cancelledOrders = AllBillUser.filter((order) => {
+      return (
+        order.orderstatus === "Đã hủy hàng" &&
+        moment(order.date) >= thirtyDaysAgo
+      );
+    });
+
+    // Đếm số đơn hàng đã hủy trong khoảng thời gian đó
+    const cancelledOrdersCount = cancelledOrders.length;
+    let date = moment().add(30, "days").format("DD-MM-YYYY");
+    if (cancelledOrdersCount >= 3) {
+      const khoaTK = await AuthModel.findByIdAndUpdate(userId, {
+        isLocked: false,
+        dateIsLockedTrue: date,
+      });
+    }
+    return cancelledOrdersCount >= 3 ? true : false;
+  } catch (error) {}
 };
