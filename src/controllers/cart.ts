@@ -15,7 +15,6 @@ export const create = async (req: any, res: any) => {
     const quantity = cartItem.quantity;
     const productOne: any = await ProductModel.findById(idpro);
     const priceTypePro: any = await TypeProductModel.findById(idprotype);
-    console.log("🚀 ~ create ~ priceTypePro:", priceTypePro);
     const namePro = productOne.name;
     const nameTypePro = priceTypePro.color + " - " + priceTypePro.size;
     const imageTypePro = priceTypePro.image;
@@ -32,6 +31,19 @@ export const create = async (req: any, res: any) => {
     });
 
     // cheeck số lượng khi thêm vào giỏ hàng
+    const productInStock = priceTypePro.quantity;
+    if (quantity <= 0) {
+      return res.status(400).json({
+        message: "Số lượng phải lớn hơn 0",
+      });
+    } else if (
+      quantity > productInStock ||
+      quantity + userCartItem?.quantity > productInStock
+    ) {
+      return res.status(400).json({
+        message: "Số lượng  vượt quá số lượng có sẵn",
+      });
+    }
 
     if (userCartItem) {
       const productInStock = priceTypePro.quantity;
